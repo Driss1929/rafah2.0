@@ -50,6 +50,8 @@ Aucun de ces points n'a modifié la formule : ce sont des décisions à prendre 
 - Fiches de provenance ajoutées, par source et par indicateur.
 - La page Méthodologie décrit l'indice comme une mesure de conditions territoriales, pas de bien-être vécu.
 
+- 27 contours sur 75 étaient géométriquement invalides, en raison de l'arrondi des coordonnées. Ils sont désormais arrondis sur une grille qui garantit leur validité, avec une surface conservée à moins de 2 % près (contrôle dans `data/processed/controle_geometries.json`). Aucun recouvrement de plus de 1 % n'est détecté entre deux territoires. Les trous entre contours n'ont pas été mesurés.
+
 ## Hors de portée de cet audit
 
 - Exactitude des fichiers publiés par les producteurs eux-mêmes.

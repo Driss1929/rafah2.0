@@ -12,6 +12,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from shapely import make_valid, set_precision
+from shapely.geometry import mapping, shape
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
@@ -394,8 +396,13 @@ def geometry(d):
         if code is None:
             unmatched.append((name, k))
             continue
-        feats.append(dict(type="Feature", properties=dict(code=int(code)),
-                          geometry=dict(type=f["geometry"]["type"], coordinates=round_c(f["geometry"]["coordinates"]))))
+        # Arrondi sur une grille qui garantit une géométrie valide, un arrondi simple créant des auto-intersections.
+        src = make_valid(shape(f["geometry"]))
+        clean = set_precision(src, .001)
+        assert clean.geom_type in ("Polygon", "MultiPolygon") and clean.is_valid, name
+        assert abs(clean.area - src.area) / src.area < .02, (name, clean.area, src.area)
+        g = mapping(clean)
+        feats.append(dict(type="Feature", properties=dict(code=int(code)), geometry=dict(type=g["type"], coordinates=round_c(g["coordinates"]))))
     assert not unmatched and len({f["properties"]["code"] for f in feats}) == 75, unmatched
     return dict(type="FeatureCollection", features=feats)
 

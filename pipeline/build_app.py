@@ -18,6 +18,8 @@ NAV = [("index", "Accueil"), ("comprendre", "Comprendre Rafah"), ("explorer", "E
        ("explorer.html#simulateur", "Simulateur"), ("intelligence", "Intelligence"), ("pro", "Pro"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("apropos", "À propos")]
 DIM_TEXT = ["Médecins, centres de soins primaires et lits d'hôpital.", "Analphabétisme, scolarisation et niveau d'études.", "Chômage, emploi salarié et établissements économiques.",
             "Assainissement, électricité et logements sommaires.", "Eau courante, combustible de cuisson et collecte des déchets.", "Égalité femmes-hommes, activité des femmes et enclavement."]
+DIM_IMG = [("dimension-sante", "Illustration d'un centre de santé et de son personnel"), ("dimension-education", "Illustration d'une salle de classe"), ("dimension-emploi", "Illustration d'une rue commerçante"),
+           ("dimension-logement", "Illustration de logements raccordés à l'électricité et à l'assainissement"), ("dimension-eau", "Illustration d'un robinet d'eau courante"), ("dimension-inclusion", "Illustration de deux femmes en discussion autour d'une table")]
 NOTES = {"salaries": "Remplace les salariés CNSS, publiés par région.", "enclavement": "Remplace les jeunes ni en emploi ni en études, non publiés par province.",
          "scolarisation": "Les 12-14 ans ne sont pas publiés.", "secondaire": "Toute la population publiée, pas seulement les 25 ans et plus.",
          "eau": "Eau courante dans le logement.", "electricite": "Électricité dans le logement.", "lits": "Public et privé, selon le lieu d'implantation.", "medecins": "Public et privé, selon le lieu d'exercice."}
@@ -131,7 +133,7 @@ def fill(text):
     values = {"min": fr(SCORES[low]), "max": fr(SCORES[high]), "min_nom": names[low], "max_nom": names[high],
               "sb": fr(SCORES[sb["code"]]), "fi": fr(SCORES[fi["code"]]), "sb_mpi": fr(sb["mpi24"]), "fi_mpi": fr(fi["mpi24"]), "sb_eau": fr(sb["v"]["eau"]), "sb_dechets": fr(sb["v"]["dechets"]),
               "sp": fr(val["spearman"], 2), "sp2": fr(val["spearman_sans_chevauchement"], 2), "chom_portail": fr(val["chomage_portail_pauvrete"], 2), "chom_rgph": fr(val["chomage_rgph_pauvrete"], 2),
-              "dim_cards": "".join(f'<div class="card"><h3>{d}</h3><p>{DIM_TEXT[k]}</p></div>' for k, d in enumerate(DATA["dimensions"]))}
+              "dim_cards": "".join(f'<div class="card dim-card"><img src="images/{DIM_IMG[k][0]}.svg" alt="{DIM_IMG[k][1]}" width="640" height="400" loading="lazy"><h3>{k + 1:02d}. {d}</h3><p>{DIM_TEXT[k]}</p></div>' for k, d in enumerate(DATA["dimensions"]))}
     for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block), ("pro_table", pro_table)]:
         if "{{" + key + "}}" in text:
             values[key] = fn()
@@ -152,6 +154,7 @@ def main():
                         ("__DATA__", json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")), ("__GEO__", GEO_TEXT.replace("</", "<\\/"))]:
         ex = ex.replace(mark, value)
     (APP / "explorer.html").write_text("<!doctype html>\n" + ex, encoding="utf-8")
+    shutil.copytree(SITE / "images", APP / "images", dirs_exist_ok=True)
     dl = APP / "donnees"
     dl.mkdir(exist_ok=True)
     for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes", "provenance_sources", "provenance_indicateurs"]:

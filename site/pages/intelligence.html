@@ -9,6 +9,17 @@
   </div>
 </section>
 <article id="report" class="report"></article>
+<section class="no-print">
+  <h2>Heatmap des territoires et des dimensions</h2>
+  <p>Chaque case montre le score d'un territoire sur une dimension, sur l'échelle fixe de 1 à 100. Ces scores restent attachés à des territoires administratifs : ce n'est pas une densité géographique. Cliquez sur un titre de colonne pour trier, ou sur un nom pour ouvrir son rapport.</p>
+  <div class="ctl" style="max-width:720px">
+    <div><label for="hm-region">Région</label><select id="hm-region"></select></div>
+    <div><label>&nbsp;</label><button class="chip" id="hm-export" type="button">Exporter ce tableau (CSV)</button></div>
+  </div>
+  <p class="legend-h"><span><b class="h0"></b>moins de 25</span><span><b class="h1"></b>25 à 40</span><span><b class="h2"></b>40 à 55</span><span><b class="h3"></b>55 à 70</span><span><b class="h4"></b>70 ou plus</span></p>
+  <div class="scroll hm-wrap"><table id="hm"></table></div>
+  <p class="fine">Source : calculs Rafah, version 2.0, à partir du RGPH 2024, de la carte sanitaire 2024 et de la cartographie des établissements 2023/2024. Résultats non officiels.</p>
+</section>
 <script>
 const DATA = {{data_json}};
 const { dimensions: DIMS, indicators: INDS, provinces: PROV } = DATA;
@@ -69,4 +80,31 @@ pick.value = 2251;
 pick.onchange = () => render(PROV.find(p => p.code === +pick.value));
 document.getElementById("print").onclick = () => window.print();
 render(PROV.find(p => p.code === 2251));
+const hm = { key: "score", dir: -1 };
+const hmClass = s => s < 25 ? 0 : s < 40 ? 1 : s < 55 ? 2 : s < 70 ? 3 : 4;
+const hmRegion = document.getElementById("hm-region");
+hmRegion.innerHTML = `<option value="">Toutes</option>` + [...new Set(PROV.map(p => p.region))].sort((a, b) => a.localeCompare(b, "fr")).map(r => `<option>${r}</option>`).join("");
+function hmRows() {
+  const val = p => hm.key === "nom" ? p.nom : hm.key === "score" ? p.score : p.dims[+hm.key];
+  return PROV.filter(p => !hmRegion.value || p.region === hmRegion.value).sort((a, b) => { const x = val(a), y = val(b); return hm.dir * (typeof x === "string" ? x.localeCompare(y, "fr") : x - y); });
+}
+function drawHeatmap() {
+  const th = (k, t) => `<th class="${k === "nom" ? "" : "n"}"><button type="button" data-k="${k}">${t}${hm.key === k ? (hm.dir > 0 ? " ↑" : " ↓") : ""}</button></th>`;
+  document.getElementById("hm").innerHTML = `<tr>${th("nom", "Territoire")}${th("score", "Rafah")}${DIMS.map((d, k) => th(String(k), d)).join("")}</tr>` + hmRows().map(p =>
+    `<tr><td><a href="#report" data-c="${p.code}">${p.nom}</a></td><td class="n hc h${hmClass(p.score)}" title="${p.nom}, indice : ${fmt(p.score)}, rang ${p.rank}, fiabilité ${p.fiab}">${fmt(p.score)}</td>${p.dims.map((d, k) => `<td class="n hc h${hmClass(d)}" title="${p.nom}, ${DIMS[k]} : ${fmt(d)}">${fmt(d)}</td>`).join("")}</tr>`).join("");
+}
+document.getElementById("hm").addEventListener("click", e => {
+  const b = e.target.closest("button"), a = e.target.closest("a[data-c]");
+  if (a) { pick.value = a.dataset.c; render(PROV.find(p => p.code === +a.dataset.c)); return; }
+  if (!b) return;
+  if (hm.key === b.dataset.k) hm.dir *= -1; else { hm.key = b.dataset.k; hm.dir = b.dataset.k === "nom" ? 1 : -1; }
+  drawHeatmap();
+});
+hmRegion.onchange = drawHeatmap;
+document.getElementById("hm-export").onclick = () => {
+  const q = s => `"${String(s).replace(/"/g, '""')}"`;
+  const csv = "﻿" + [["Territoire", "Code HCP", "Région", "Rafah", ...DIMS, "Fiabilité"].map(q).join(";"), ...hmRows().map(p => [q(p.nom), q(p.code), q(p.region), fmt(p.score), ...p.dims.map(d => fmt(d)), q(p.fiab)].join(";"))].join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "rafah_heatmap.csv"; document.body.append(a); a.click(); a.remove();
+};
+drawHeatmap();
 </script>

@@ -1,0 +1,195 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "API interne Rafah",
+  "version": "1.0.0",
+  "description": "Contrat interne, non publié. Résultats non officiels. id = code géographique HCP."
+ },
+ "paths": {
+  "/territories": {
+   "get": {
+    "summary": "Liste des 75 territoires",
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/territories/{id}": {
+   "get": {
+    "summary": "Fiche synthétique",
+    "parameters": [
+     {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/territories/{id}/geometry": {
+   "get": {
+    "summary": "Géométrie GeoJSON",
+    "parameters": [
+     {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/territories/{id}/indicators": {
+   "get": {
+    "summary": "18 indicateurs, valeurs, unités, sources et statuts",
+    "parameters": [
+     {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/territories/{id}/dimensions": {
+   "get": {
+    "summary": "Six scores",
+    "parameters": [
+     {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/rankings/{dimension}": {
+   "get": {
+    "summary": "Classement national, overall ou une dimension",
+    "parameters": [
+     {
+      "name": "dimension",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/dimensions": {
+   "get": {
+    "summary": "Catalogue des dimensions",
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/indicators": {
+   "get": {
+    "summary": "Catalogue des indicateurs",
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/geojson/morocco": {
+   "get": {
+    "summary": "FeatureCollection des 75 géométries",
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  },
+  "/metadata": {
+   "get": {
+    "summary": "Version, millésimes et méthode",
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Réponse JSON"
+     },
+     "404": {
+      "description": "Territoire inconnu"
+     }
+    }
+   }
+  }
+ }
+}

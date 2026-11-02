@@ -91,7 +91,7 @@ td.n, th.n { text-align: right; white-space: nowrap }
 __NAV__
 <div class="wrap">
   <div class="ex-title"><h1>Explorer les territoires</h1>
-    <p>Carte, fiche et simulateur des 75 provinces et préfectures. Chaque score vient de 18 indicateurs publics, sur une échelle de 1 à 100.</p></div>
+    <p>Carte, fiche et simulateur des 75 provinces et préfectures. 75 territoires couverts, 18 indicateurs publics, échelle de 1 à 100. Données de 2023 à 2024 pour le score, extraites le 2 novembre 2026.</p></div>
 
   <div class="grid">
     <nav class="panel" aria-label="Classement des provinces">
@@ -109,6 +109,7 @@ __NAV__
           <button class="chip" id="z-all" type="button">Tout le pays</button>
           <button class="chip" id="z-north" type="button">Nord</button>
           <button class="chip" id="z-axis" type="button">Rabat-Casablanca</button>
+          <button class="chip" id="f-reset" type="button">Réinitialiser</button>
         </div>
       </div>
       <div id="map" role="img" aria-label="Carte des provinces colorées selon l'indicateur choisi"></div>
@@ -131,7 +132,7 @@ __NAV__
   <div class="below">
     <section class="panel">
       <h2 id="ponderations">Modifier les pondérations</h2>
-      <p class="note">Par défaut, les six dimensions pèsent autant. Déplacez un curseur pour recalculer les scores et le classement de toutes les provinces.</p>
+      <p class="note">Par défaut, les six dimensions pèsent autant. Déplacez un curseur pour recalculer les scores et le classement de toutes les provinces. Simulation de pondération : scénario mathématique, pas prévision d'impact d'une politique publique.</p>
       <div class="weights" id="weights"></div>
       <button class="chip" id="w-reset" type="button" style="margin-top:10px">Revenir aux poids égaux</button>
       <h2 style="margin-top:18px">Solidité du résultat</h2>
@@ -210,6 +211,8 @@ function recompute() {
   state.mean = PROV.reduce((a, p) => a + p.score, 0) / PROV.length;
   state.dimMean = DIMS.map((_, k) => PROV.reduce((a, p) => a + p.dims[k], 0) / PROV.length);
   state.sorted = sorted;
+  const seen = {};
+  sorted.forEach(p => p.rrank = seen[p.region] = (seen[p.region] || 0) + 1);
 }
 const scoreClass = s => s < 25 ? 0 : s < 40 ? 1 : s < 55 ? 2 : s < 70 ? 3 : 4;
 const povClass = m => m >= 13 ? 0 : m >= 9 ? 1 : m >= 6 ? 2 : m >= 3 ? 3 : 4;
@@ -243,7 +246,10 @@ function colorOf(p) {
 function tipValue(p) {
   if (state.layer === "mpi") return fmt(p.mpi24) + " %";
   if (CTX[state.layer]) return p.ctx[state.layer] === null ? "non publié" : fmt(p.ctx[state.layer]) + CTX[state.layer].unit;
-  return fmt(layerValue(p));
+  return fmt(layerValue(p)) + (state.layer === "rafah" ? ` · rang ${p.rank} · fiabilité ${p.fiab.toLowerCase()}` : "");
+}
+function shareLink() {
+  try { history.replaceState(null, "", `#t${state.code}_${state.layer}`); } catch (e) { /* lien non modifiable dans certains cadres */ }
 }
 function spark(arr) {
   const pts = arr.map((v, i) => [i, v]).filter(a => a[1] !== null);
@@ -307,7 +313,8 @@ function paint() {
     lg = [`jusqu'à ${b[0]}`, `${b[0]} à ${b[1]}`, `${b[1]} à ${b[2]}`, `${b[2]} à ${b[3]}`, `plus de ${b[3]}`];
     if (CTX[state.layer].worseHigh) lg.reverse();
   }
-  document.getElementById("legend").innerHTML = lg.map((t, k) => `<span><b style="background:${CL[k]}"></b>${t}</span>`).join("") + `<span>Pointillés : donnée imputée ou particulière (voir la fiche)</span>`;
+  const absent = CTX[state.layer] ? `<span><b style="background:var(--line)"></b>non publié</span>` : "";
+  document.getElementById("legend").innerHTML = lg.map((t, k) => `<span><b style="background:${CL[k]}"></b>${t}</span>`).join("") + absent + `<span>Pointillés : donnée imputée ou particulière (voir la fiche)</span>`;
 }
 function renderList() {
   const q = document.getElementById("q").value.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
@@ -387,8 +394,8 @@ function renderSheet() {
   const rows = INDS.map(i => `<tr><td>${i.label}<br><span class="st ${p.status[i.id]}">${p.status[i.id]}</span></td><td class="n">${fmt(p.v[i.id])}</td><td class="n">${fmt(norm(p.v[i.id], i), 0)}</td></tr>`).join("");
   document.getElementById("sheet").innerHTML = `
     <h2 style="font-size:1.55rem">${p.nom}</h2>
-    <p class="sub">${p.type} · ${p.region} · ${fmt(p.population, 0)} habitants</p>
-    <div class="big"><strong>${fmt(p.score)}</strong><div><small>Rang ${p.rank} sur 75</small><small>${gap >= 0 ? "+" : "−"}${fmt(Math.abs(gap))} par rapport à la moyenne des provinces</small><small>Rang probable selon les poids : ${p.rangP05} à ${p.rangP95}</small></div></div>
+    <p class="sub">${p.type} · ${p.region} · ${fmt(p.population, 0)} habitants · code HCP ${p.code}</p>
+    <div class="big"><strong>${fmt(p.score)}</strong><div><small>Rang ${p.rank} sur 75, ${p.rrank} dans sa région</small><small>${gap >= 0 ? "+" : "−"}${fmt(Math.abs(gap))} par rapport à la moyenne des provinces</small><small>Rang probable selon les poids : ${p.rangP05} à ${p.rangP95}</small></div></div>
     ${bars}
     <p class="note">Le trait vertical marque la moyenne des provinces. Dimension la plus faible : <b>${DIMS[weak]}</b>.</p>
     <p class="note">Pauvreté multidimensionnelle (HCP) : ${fmt(p.mpi14)} % en 2014, ${fmt(p.mpi24)} % en 2024.</p>
@@ -414,7 +421,7 @@ document.getElementById("sheet").addEventListener("input", e => {
 });
 document.getElementById("sheet").addEventListener("click", e => { if (e.target.id === "sim-reset") { state.sim = {}; renderSheet(); } });
 function select(code, pan) {
-  state.code = code; state.sim = {};
+  state.code = code; state.sim = {}; shareLink();
   paint(); renderList(); renderSheet();
   if (pan) shapes.eachLayer(l => { if (l.feature.properties.code === code && map.getBounds && !map.getBounds().contains(l.getBounds())) map.fitBounds(l.getBounds().pad(1.2)); });
 }
@@ -427,7 +434,15 @@ CMP.codes.forEach((c, k) => {
 });
 
 document.getElementById("layer").innerHTML = `<option value="rafah">Indice Rafah</option>` + DIMS.map((d, k) => `<option value="${k}">${d}</option>`).join("") + `<option value="mpi">Pauvreté multidimensionnelle du HCP (hors indice)</option>` + Object.entries(CTX).map(([k, c]) => `<option value="${k}">${c.label}</option>`).join("");
-document.getElementById("layer").onchange = e => { state.layer = e.target.value; paint(); };
+document.getElementById("layer").onchange = e => { state.layer = e.target.value; paint(); shareLink(); };
+document.getElementById("f-reset").onclick = () => {
+  state.region = ""; state.layer = "rafah";
+  document.getElementById("reg").value = ""; document.getElementById("q").value = ""; document.getElementById("layer").value = "rafah";
+  paint(); renderList(); shareLink(); map.fitBounds(zooms.all);
+};
+const linked = location.hash.match(/^#t(\d+)_(\w+)$/);
+if (linked && byCode.has(+linked[1])) state.code = +linked[1];
+if (linked && [...document.getElementById("layer").options].some(o => o.value === linked[2])) { state.layer = linked[2]; document.getElementById("layer").value = linked[2]; }
 document.getElementById("weights").innerHTML = DIMS.map((d, k) => `<div><label for="w-${k}">${d} : <output id="wp-${k}"></output></label><input id="w-${k}" type="range" min="0" max="3" step=".25" value="1" data-k="${k}"></div>`).join("");
 document.getElementById("weights").addEventListener("input", e => { state.weights[+e.target.dataset.k] = +e.target.value; refresh(); });
 function showWeights() {

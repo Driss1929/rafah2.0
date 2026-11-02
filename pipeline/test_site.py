@@ -18,7 +18,7 @@ for name, text in pages.items():
         problems.append(f"{name} : marqueur non remplacé")
     if "Projet de recherche indépendant" not in markup:
         problems.append(f"{name} : mention d'indépendance absente")
-    for src in set(re.findall(r'<script src="([^"]+)"', text)):
+    for src in set(re.findall(r'<(?:script|img) src="([^"]+)"', text)):
         if not re.match(r"https?:", src) and not (APP / src).exists():
             problems.append(f"{name} : script absent {src}")
     for href in set(re.findall(r'href="([^"]+)"', markup)):
