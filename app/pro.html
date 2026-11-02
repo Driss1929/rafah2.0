@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Rafah Pro</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap"><style>/* Portail éditorial : bandeau bleu profond, or réservé aux accents, grands titres sobres. */
+:root {
+  --bg: #f4f6f9; --panel: #ffffff; --fg: #14213a; --muted: #566175; --line: #d7deE8;
+  --accent: #123a6b; --accent-soft: #e2e9f3; --gold: #a97c1f; --warn: #a33b12; --band: #0f2d55; --band-fg: #f4f6f9; --land-line: #ffffff;
+  --c1: #b5431d; --c2: #e59a58; --c3: #e6d79c; --c4: #68b3a4; --c5: #0f6b76;
+  --display: "IBM Plex Sans", "Segoe UI", sans-serif; --body: "IBM Plex Sans", "Segoe UI", sans-serif; --arabic: "Reem Kufi", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1626; --panel: #15213a; --fg: #e8edf5; --muted: #a2aec2; --line: #2c3a55;
+  --accent: #8db4e8; --accent-soft: #1f3050; --gold: #d9b45f; --warn: #f0a07a; --band: #0a1a33; --land-line: #0d1626; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d1626; --panel: #15213a; --fg: #e8edf5; --muted: #a2aec2; --line: #2c3a55;
+  --accent: #8db4e8; --accent-soft: #1f3050; --gold: #d9b45f; --warn: #f0a07a; --band: #0a1a33; --land-line: #0d1626; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); font-variant-numeric: tabular-nums }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+a { color: var(--accent) }
+.site-head { background: var(--band); color: var(--band-fg); padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)) }
+.site-head .in { max-width: 1480px; margin: 0 auto; padding-block: 10px; display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center }
+.brand { color: inherit; text-decoration: none; display: flex; flex-direction: column; line-height: 1.2 }
+.brand b { font-size: 1.15rem } .brand b span { font: 500 1.05rem var(--arabic); color: #e2c37a; margin-left: 6px }
+.brand small { font-size: .72rem; letter-spacing: .03em; opacity: .85 }
+.site-nav { display: flex; flex-wrap: wrap; gap: 2px 4px; flex: 1 1 320px; justify-content: flex-end; min-width: 0 }
+.site-nav a { color: inherit; text-decoration: none; font-size: .88rem; padding: 4px 8px; border-bottom: 2px solid transparent }
+.site-nav a:hover { border-color: #e2c37a }
+.site-nav a[aria-current=page] { border-color: #e2c37a; font-weight: 600 }
+.notice { background: var(--accent-soft); color: var(--fg); font-size: .82rem; padding: 5px max(16px, env(safe-area-inset-right, 0px)) 5px max(16px, env(safe-area-inset-left, 0px)); text-align: center }
+main.page { max-width: 1120px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 34px }
+main.page > * { min-width: 0 }
+main.page h1 { font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1.12; margin: 0 0 12px; text-wrap: balance; font-weight: 700 }
+main.page h2 { font-size: 1.45rem; margin: 0 0 10px; text-wrap: balance }
+main.page h3 { font-size: 1.05rem; margin: 14px 0 5px }
+main.page p, main.page li { max-width: 72ch }
+.lead { font-size: 1.12rem; color: var(--muted) }
+.eyebrow { color: var(--gold); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px }
+.hero { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 4fr); gap: 28px; align-items: center }
+.hero svg { width: 100%; height: auto; max-height: 460px }
+.hero path { stroke: var(--land-line); stroke-width: .35 }
+.btn { display: inline-block; background: var(--accent); color: var(--panel); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 4px 8px 4px 0 }
+.btn.alt { background: none; color: var(--accent); border: 1px solid var(--accent) }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; border-block: 1px solid var(--line); padding-block: 14px }
+.figs b { display: block; font-size: 2.2rem; line-height: 1.1; color: var(--accent) }
+.figs span { color: var(--muted); font-size: .9rem }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px 24px }
+.cols > div { min-width: 0 }
+.cols h3 { margin-top: 0 }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 14px 16px }
+.scroll { overflow-x: auto }
+.page table { border-collapse: collapse; width: 100%; font-size: .88rem; background: var(--panel) }
+.page th, .page td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top }
+.page th { font-size: .8rem; color: var(--muted) }
+td.n, th.n { text-align: right; white-space: nowrap }
+.ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px }
+.ctl label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block }
+.page select, .page input[type=search] { width: 100%; padding: 7px 9px; font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 4px }
+.page button.chip { font: inherit; font-size: .88rem; padding: 7px 12px; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 4px; cursor: pointer }
+th button { all: unset; cursor: pointer; font-weight: 600 } th button:hover { color: var(--accent) }
+.formula { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; font-size: .95rem; overflow-x: auto }
+.site-foot { background: var(--band); color: var(--band-fg); font-size: .86rem; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 22px max(16px, env(safe-area-inset-left, 0px)) }
+.site-foot .in { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 26px; justify-content: space-between }
+.site-foot a { color: inherit } .site-foot p { margin: 0; max-width: 62ch }
+.eco h3 { margin: 8px 0 4px } .eco ul { padding-left: 18px; font-size: .92rem }
+.stat { display: inline-block; font-size: .76rem; font-weight: 700; padding: 1px 8px; border-radius: 10px; border: 1px solid currentColor }
+.stat.ok { color: var(--accent) } .stat.dev { color: var(--gold) } .stat.vis { color: var(--muted) }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px }
+.flow li { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--gold); padding: 10px 12px; max-width: none }
+.flow b, .flow span { display: block } .flow span { font-size: .85rem; color: var(--muted) }
+.report { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 22px clamp(14px, 3vw, 30px) }
+.report .rtitle { font-size: 1.6rem } .report table { background: none }
+.fine { font-size: .84rem; color: var(--muted) } .demo { border-left: 3px solid var(--gold); padding-left: 10px }
+.mock { border: 2px dashed var(--muted); border-radius: 6px; padding: 16px; background: var(--panel) }
+.mock-tag { display: inline-block; font-size: .8rem; font-weight: 700; color: var(--warn); margin-bottom: 8px }
+.mock-note { font-size: .84rem; color: var(--muted) }
+@media print { .site-head, .notice, .site-foot, .no-print { display: none !important } body { background: #fff; color: #000 } main.page { padding: 0; display: block } .report { border: 0; padding: 0 } }
+@media (max-width: 800px) { .hero { grid-template-columns: minmax(0, 1fr) } .site-nav { justify-content: flex-start } }
+</style></head><body><header class="site-head"><div class="in"><a class="brand" href="index.html"><b>Rafah 2.0<span lang="ar" dir="rtl">رفاه</span></b><small>Observatoire indépendant du bien-être territorial</small></a><nav class="site-nav" aria-label="Menu principal"><a href="index.html">Accueil</a><a href="comprendre.html">Comprendre Rafah</a><a href="explorer.html">Explorer</a><a href="indicateurs.html">Indicateurs</a><a href="analyses.html">Analyses</a><a href="explorer.html#simulateur">Simulateur</a><a href="intelligence.html">Intelligence</a><a href="pro.html" aria-current="page">Pro</a><a href="methodologie.html">Méthodologie</a><a href="donnees.html">Données</a><a href="apropos.html">À propos</a></nav></div></header><div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div><main class="page">
+<section>
+  <div class="eyebrow">Vision à long terme</div>
+  <h1>Rafah Pro</h1>
+  <p class="lead">Une idée d'espace de suivi pour les organisations qui travaillent sur les territoires. Ce service n'existe pas encore et rien n'est à vendre.</p>
+  <p>Avant de le développer, il faut confirmer les droits sur les données, faire relire la méthode et vérifier les besoins auprès de premiers utilisateurs.</p>
+</section>
+<section>
+  <h2>À quoi cela pourrait ressembler</h2>
+  <div class="mock" aria-label="Maquette non fonctionnelle">
+    <div class="mock-tag">Maquette non fonctionnelle : aucun compte, aucune donnée enregistrée</div>
+    <h3>Territoires suivis (exemple)</h3>
+    <div class="scroll"><table><tr><th>Territoire</th><th class="n">Score Rafah</th><th class="n">Pauvreté HCP 2014</th><th class="n">Pauvreté HCP 2024</th><th>Chômage 2017-2025 (enquête emploi)</th><th>Fiabilité</th></tr><tr><td>Figuig</td><td class="n">21,3</td><td class="n">36,6 %</td><td class="n">24,1 %</td><td><svg viewBox="0 0 96 26" width="96" height="26" role="img" aria-label="Chômage de 2017 à 2025"><polyline points="4,17.7 15,20.3 26,22.0 37,4.0 48,20.1 59,18.4 70,17.1 81,6.5 92,11.7" fill="none" stroke="var(--accent)" stroke-width="2"/></svg></td><td>Élevée</td></tr><tr><td>Sidi Bennour</td><td class="n">18,3</td><td class="n">17,8 %</td><td class="n">11,7 %</td><td><svg viewBox="0 0 96 26" width="96" height="26" role="img" aria-label="Chômage de 2017 à 2025"><polyline points="4,18.5 15,22.0 26,18.5 37,17.6 48,13.0 59,11.8 70,6.6 81,4.0 92,10.1" fill="none" stroke="var(--accent)" stroke-width="2"/></svg></td><td>Élevée</td></tr><tr><td>Taounate</td><td class="n">13,9</td><td class="n">30,5 %</td><td class="n">21,1 %</td><td><svg viewBox="0 0 96 26" width="96" height="26" role="img" aria-label="Chômage de 2017 à 2025"><polyline points="4,22.0 15,22.0 26,21.7 37,14.4 48,16.1 59,16.7 70,18.6 81,14.1 92,4.0" fill="none" stroke="var(--accent)" stroke-width="2"/></svg></td><td>Élevée</td></tr></table></div>
+    <p class="mock-note">Les chiffres sont de vraies valeurs de Rafah et du portail data.gov.ma. Le chômage vient de l'enquête emploi, une mesure différente du recensement utilisé dans le score. L'évolution de l'indice lui-même n'est pas encore calculée.</p>
+  </div>
+</section>
+<section class="cols">
+  <div><h2>Fonctions envisagées</h2><ul>
+    <li>Choisir les territoires à suivre.</li>
+    <li>Suivre les indicateurs dans le temps.</li>
+    <li>Exporter des tableaux et des rapports.</li>
+    <li>Partager un espace au sein d'une organisation.</li>
+  </ul></div>
+  <div><h2>Ce qu'il faut valider d'abord</h2><ul>
+    <li>Les droits de réutilisation commerciale des données.</li>
+    <li>Une série historique complète de l'indice.</li>
+    <li>La relecture de la méthode par des statisticiens.</li>
+    <li>Un besoin réel, testé avec un premier partenaire.</li>
+  </ul></div>
+</section>
+<section>
+  <p>Vous travaillez sur ces sujets ? <a href="https://github.com/Driss1929/rafah2.0/issues">Partagez vos besoins sur GitHub</a>, ou voyez ce qui fonctionne déjà dans <a href="explorer.html">Explorer</a>.</p>
+</section>
+</main><footer class="site-foot"><div class="in"><p>Rafah 2.0. Mesurer, comprendre, agir. Prototype indépendant construit à partir de données publiques du HCP, du ministère de la Santé et de data.gov.ma. Données extraites le 2 novembre 2026.</p><p><a href="apropos.html">À propos</a> · <a href="methodologie.html">Méthodologie</a> · <a href="donnees.html">Sources</a> · <a href="https://github.com/Driss1929/rafah2.0">GitHub</a></p></div></footer></body></html>

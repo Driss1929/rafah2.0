@@ -1,0 +1,72 @@
+<!-- title: Rafah Intelligence -->
+<section class="no-print">
+  <div class="eyebrow">Démonstration, service en développement</div>
+  <h1>Rafah Intelligence</h1>
+  <p class="lead">Un diagnostic territorial généré à partir des données de l'indice. Choisissez un territoire : chaque chiffre vient des données publiées, et le rapport pose des questions sans prescrire de solution.</p>
+  <div class="ctl" style="max-width:560px">
+    <div><label for="pick">Territoire</label><select id="pick"></select></div>
+    <div><label>&nbsp;</label><button class="chip" id="print" type="button">Imprimer ou enregistrer en PDF</button></div>
+  </div>
+</section>
+<article id="report" class="report"></article>
+<script>
+const DATA = {{data_json}};
+const { dimensions: DIMS, indicators: INDS, provinces: PROV } = DATA;
+const fmt = (x, d = 1) => Number(x).toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d });
+const norm = (x, i) => Math.min(100, Math.max(1, 1 + 99 * (i.sens > 0 ? x - i.L : i.U - x) / (i.U - i.L)));
+for (const p of PROV) {
+  p.dims = DIMS.map((_, k) => { const s = INDS.filter(i => i.dim === k).map(i => norm(p.v[i.id], i)); return s.reduce((a, b) => a + b) / 3; });
+  p.score = Math.exp(p.dims.reduce((a, d) => a + Math.log(d), 0) / 6);
+}
+[...PROV].sort((a, b) => b.score - a.score).forEach((p, n) => p.rank = n + 1);
+const dimMean = DIMS.map((_, k) => PROV.reduce((a, p) => a + p.dims[k], 0) / PROV.length);
+const mean = PROV.reduce((a, p) => a + p.score, 0) / PROV.length;
+const median = id => { const s = PROV.map(p => p.v[id]).sort((a, b) => a - b); return s[37]; };
+const nearest = p => [...PROV].filter(o => o !== p).sort((a, b) => dist(p, a) - dist(p, b)).slice(0, 2);
+const dist = (a, b) => a.dims.reduce((s, d, k) => s + (d - b.dims[k]) ** 2, 0);
+function dimChart(p) {
+  const W = 680, L0 = 200, R0 = 20, H = 28 + 30 * 6, X = v => L0 + (v - 1) / 99 * (W - L0 - R0);
+  const rows = DIMS.map((d, k) => { const y = 32 + k * 30; return `<text x="0" y="${y + 4}" font-size="13" fill="var(--fg)">${d}</text><line x1="${X(1)}" x2="${X(p.dims[k])}" y1="${y}" y2="${y}" stroke="var(--accent)" stroke-width="8"/><line x1="${X(dimMean[k])}" x2="${X(dimMean[k])}" y1="${y - 9}" y2="${y + 9}" stroke="var(--gold)" stroke-width="3"/><text x="${X(p.dims[k]) + 6}" y="${y - 7}" font-size="11" fill="var(--muted)">${fmt(p.dims[k])}</text>`; }).join("");
+  return `<div class="scroll"><svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:480px" role="img" aria-label="Scores des six dimensions comparés à la moyenne des provinces">${[1, 25, 50, 75, 100].map(t => `<text x="${X(t)}" y="12" text-anchor="middle" font-size="11" fill="var(--muted)">${t}</text>`).join("")}${rows}</svg></div><p class="fine">Barre : score du territoire. Trait doré : moyenne des provinces.</p>`;
+}
+function render(p) {
+  const gaps = INDS.map(i => ({ i, s: norm(p.v[i.id], i), m: median(i.id), gap: norm(p.v[i.id], i) - PROV.reduce((a, o) => a + norm(o.v[i.id], i), 0) / PROV.length })).sort((a, b) => a.gap - b.gap);
+  const low = gaps.slice(0, 4).filter(g => g.gap < 0), high = gaps.slice(-3).reverse().filter(g => g.gap > 0);
+  const near = nearest(p), weak = p.dims.indexOf(Math.min(...p.dims)), strong = p.dims.indexOf(Math.max(...p.dims));
+  const ene = p.ene.chomage.filter(x => x !== null);
+  const line = g => `<tr><td>${g.i.label}</td><td class="n">${fmt(p.v[g.i.id])} ${g.i.unit}</td><td class="n">${fmt(g.m)} ${g.i.unit}</td></tr>`;
+  document.getElementById("report").innerHTML = `
+    <p class="fine demo">Rapport de démonstration généré automatiquement. Prototype indépendant, résultats non officiels, méthode non relue par des statisticiens.</p>
+    <h2 class="rtitle">Diagnostic territorial : ${p.nom}</h2>
+    <h3>1. Le territoire</h3>
+    <p>${p.type} de la région ${p.region}, ${fmt(p.population, 0)} habitants en 2024 (population municipale du RGPH).</p>
+    <h3>2. Position nationale</h3>
+    <p>Score Rafah de <b>${fmt(p.score)}</b>, rang <b>${p.rank} sur 75</b>, pour une moyenne des provinces de ${fmt(mean)}. Selon les pondérations testées, son rang va de ${p.rangP05} à ${p.rangP95}. Valeurs publiées ou calculées : ${p.couverture} sur 18. Fiabilité : ${p.fiab}${p.fiabRaisons.length ? " (" + p.fiabRaisons.join(" ; ") + ")" : ""}.</p>
+    <h3>3. Les six dimensions</h3>
+    ${dimChart(p)}
+    <p>Dimension la plus élevée : ${DIMS[strong]} (${fmt(p.dims[strong])}). Dimension la plus faible : ${DIMS[weak]} (${fmt(p.dims[weak])}). Ce repère dépend en partie des bornes de normalisation.</p>
+    <h3>4. Territoires au profil proche</h3>
+    <p>Les deux territoires dont les six scores ressemblent le plus à ceux de ${p.nom}, quelle que soit leur région.</p>
+    <div class="scroll"><table><tr><th></th><th class="n">${p.nom}</th>${near.map(o => `<th class="n">${o.nom}</th>`).join("")}</tr>
+      <tr><td>Score Rafah</td><td class="n"><b>${fmt(p.score)}</b></td>${near.map(o => `<td class="n">${fmt(o.score)}</td>`).join("")}</tr>
+      ${DIMS.map((d, k) => `<tr><td>${d}</td><td class="n">${fmt(p.dims[k])}</td>${near.map(o => `<td class="n">${fmt(o.dims[k])}</td>`).join("")}</tr>`).join("")}
+      <tr><td>Pauvreté multidimensionnelle HCP 2024</td><td class="n">${fmt(p.mpi24)} %</td>${near.map(o => `<td class="n">${fmt(o.mpi24)} %</td>`).join("")}</tr></table></div>
+    <h3>5. Écarts principaux</h3>
+    <div class="scroll"><table><tr><th>En retrait par rapport aux autres provinces</th><th class="n">${p.nom}</th><th class="n">Médiane</th></tr>${low.map(line).join("") || '<tr><td colspan="3">Aucun indicateur</td></tr>'}</table></div>
+    <div class="scroll" style="margin-top:10px"><table><tr><th>Atouts relatifs</th><th class="n">${p.nom}</th><th class="n">Médiane</th></tr>${high.map(line).join("") || '<tr><td colspan="3">Aucun indicateur</td></tr>'}</table></div>
+    <h3>6. Évolutions disponibles</h3>
+    <p>Pauvreté multidimensionnelle (HCP) : ${fmt(p.mpi14)} % en 2014, ${fmt(p.mpi24)} % en 2024.${ene.length ? ` Chômage selon l'enquête emploi, un échantillon différent du recensement : ${fmt(p.ene.chomage[0])} % en 2017, ${fmt(p.ene.chomage[8])} % en 2025.` : " Le chômage de l'enquête emploi n'est pas publié pour ce territoire."} L'évolution de l'indice lui-même n'est pas calculée.</p>
+    <h3>7. Questions à examiner</h3>
+    <p>Ces questions découlent des écarts ci-dessus. Ce ne sont ni des recommandations ni des impacts démontrés.</p>
+    <ul>${low.slice(0, 3).map(g => `<li>Qu'est-ce qui explique l'écart sur « ${g.i.label.toLowerCase()} » (${fmt(p.v[g.i.id])} ${g.i.unit} contre une médiane de ${fmt(g.m)} ${g.i.unit}) ? Cet écart se retrouve-t-il dans toutes les communes ?</li>`).join("")}
+      <li>Les programmes déjà engagés sur le territoire sont-ils reflétés dans ces données ? Il faudrait le vérifier auprès des acteurs locaux.</li></ul>
+    <h3>8. Sources et limites</h3>
+    <p class="fine">Sources : RGPH 2024 et cartographie des établissements 2023/2024 (HCP), carte sanitaire 2024 (ministère de la Santé), data.gov.ma. L'offre de soins est comptée sur son lieu d'implantation. Un classement ne mesure ni la gestion d'un territoire ni le bien-être vécu. Détails sur les pages <a href="methodologie.html">Méthodologie</a> et <a href="donnees.html">Données</a>.</p>`;
+}
+const pick = document.getElementById("pick");
+pick.innerHTML = [...PROV].sort((a, b) => a.nom.localeCompare(b.nom, "fr")).map(p => `<option value="${p.code}">${p.nom}</option>`).join("");
+pick.value = 2251;
+pick.onchange = () => render(PROV.find(p => p.code === +pick.value));
+document.getElementById("print").onclick = () => window.print();
+render(PROV.find(p => p.code === 2251));
+</script>

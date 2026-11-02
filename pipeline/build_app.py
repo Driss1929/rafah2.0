@@ -15,7 +15,7 @@ CSS = (SITE / "site.css").read_text(encoding="utf-8")
 FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap">'
 HEAD = '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="claude:viewport-fit-sides" content="cover">\n'
 NAV = [("index", "Accueil"), ("comprendre", "Comprendre Rafah"), ("explorer", "Explorer"), ("indicateurs", "Indicateurs"), ("analyses", "Analyses"),
-       ("explorer.html#simulateur", "Simulateur"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("apropos", "À propos")]
+       ("explorer.html#simulateur", "Simulateur"), ("intelligence", "Intelligence"), ("pro", "Pro"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("apropos", "À propos")]
 DIM_TEXT = ["Médecins, centres de soins primaires et lits d'hôpital.", "Analphabétisme, scolarisation et niveau d'études.", "Chômage, emploi salarié et établissements économiques.",
             "Assainissement, électricité et logements sommaires.", "Eau courante, combustible de cuisson et collecte des déchets.", "Égalité femmes-hommes, activité des femmes et enclavement."]
 NOTES = {"salaries": "Remplace les salariés CNSS, publiés par région.", "enclavement": "Remplace les jeunes ni en emploi ni en études, non publiés par province.",
@@ -85,6 +85,20 @@ def robust():
     return head + "".join(f'<tr><td>{html.escape(r["scenario"])}</td><td class="n">{fr(r["spearman"], 2)}</td><td class="n">{fr(r["ecart_rang_moyen"])}</td><td class="n">{r["bas15_conserves"]} sur 15</td></tr>' for r in DATA["robustness"])
 
 
+def pro_table():
+    """Lignes de la maquette Pro : vraies valeurs de territoires pris en exemple."""
+    def spark(vals):
+        pts = [(i, v) for i, v in enumerate(vals) if v is not None]
+        lo, hi = min(v for _, v in pts), max(v for _, v in pts)
+        path = " ".join(f"{4 + i * 11:.0f},{22 - (v - lo) / ((hi - lo) or 1) * 18:.1f}" for i, v in pts)
+        return f'<svg viewBox="0 0 96 26" width="96" height="26" role="img" aria-label="Chômage de 2017 à 2025"><polyline points="{path}" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>'
+    rows = ['<tr><th>Territoire</th><th class="n">Score Rafah</th><th class="n">Pauvreté HCP 2014</th><th class="n">Pauvreté HCP 2024</th><th>Chômage 2017-2025 (enquête emploi)</th><th>Fiabilité</th></tr>']
+    for name in ["Figuig", "Sidi Bennour", "Taounate"]:
+        p = BY[name]
+        rows.append(f'<tr><td>{name}</td><td class="n">{fr(SCORES[p["code"]])}</td><td class="n">{fr(p["mpi14"])} %</td><td class="n">{fr(p["mpi24"])} %</td><td>{spark(p["ene"]["chomage"])}</td><td>{p["fiab"]}</td></tr>')
+    return "".join(rows)
+
+
 def audit_block():
     a = json.loads((OUT / "audit_independant.json").read_text(encoding="utf-8"))
     labels = {i["id"]: i["label"] for i in DATA["indicators"]}
@@ -118,7 +132,7 @@ def fill(text):
               "sb": fr(SCORES[sb["code"]]), "fi": fr(SCORES[fi["code"]]), "sb_mpi": fr(sb["mpi24"]), "fi_mpi": fr(fi["mpi24"]), "sb_eau": fr(sb["v"]["eau"]), "sb_dechets": fr(sb["v"]["dechets"]),
               "sp": fr(val["spearman"], 2), "sp2": fr(val["spearman_sans_chevauchement"], 2), "chom_portail": fr(val["chomage_portail_pauvrete"], 2), "chom_rgph": fr(val["chomage_rgph_pauvrete"], 2),
               "dim_cards": "".join(f'<div class="card"><h3>{d}</h3><p>{DIM_TEXT[k]}</p></div>' for k, d in enumerate(DATA["dimensions"]))}
-    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block)]:
+    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block), ("pro_table", pro_table)]:
         if "{{" + key + "}}" in text:
             values[key] = fn()
     if "{{data_json}}" in text:
