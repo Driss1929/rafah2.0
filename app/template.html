@@ -1,0 +1,369 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rafah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Reem+Kufi:wght@500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Atlas de travail : liste des provinces, carte au centre, fiche et simulateur à droite. */
+:root {
+  --bg: #eef3f2; --panel: #fbfdfc; --fg: #14282a; --muted: #55686a; --line: #cbd8d6;
+  --accent: #0d6470; --accent-soft: #d9ebea; --land-line: #fbfdfc; --warn: #a33b12;
+  --c1: #b5431d; --c2: #e59a58; --c3: #e6d79c; --c4: #68b3a4; --c5: #0f6b76;
+  --display: "Alegreya", Georgia, serif; --body: "Source Sans 3", "Segoe UI", sans-serif; --arabic: "Reem Kufi", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1c1e; --panel: #162729; --fg: #e6f0ee; --muted: #9db1b0; --line: #2d4345;
+  --accent: #6cc4bc; --accent-soft: #1f3b3d; --land-line: #0f1c1e; --warn: #f0a07a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1c1e; --panel: #162729; --fg: #e6f0ee; --muted: #9db1b0; --line: #2d4345;
+  --accent: #6cc4bc; --accent-soft: #1f3b3d; --land-line: #0f1c1e; --warn: #f0a07a; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 16px/1.45 var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 18px 40px; font-variant-numeric: tabular-nums }
+.wrap { max-width: 1480px; margin: 0 auto; display: grid; gap: 16px }
+h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.15; text-wrap: balance }
+header { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline }
+h1 { font-size: 2.1rem; display: flex; gap: 12px; align-items: baseline }
+h1 span { font: 500 1.7rem var(--arabic); color: var(--accent) }
+header p { margin: 0; color: var(--muted); max-width: 72ch; flex: 1 1 340px; min-width: 0 }
+.grid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 390px; gap: 14px; align-items: start }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; min-width: 0 }
+label, .lab { font-size: .8rem; color: var(--muted); font-weight: 600 }
+input[type=search], select { width: 100%; padding: 7px 9px; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+#list { list-style: none; margin: 10px 0 0; padding: 0; max-height: 610px; overflow-y: auto }
+#list button { width: 100%; display: grid; grid-template-columns: 26px 1fr auto; gap: 6px; align-items: center; text-align: left; padding: 5px 6px; font: inherit; font-size: .92rem; color: var(--fg); background: none; border: 0; border-radius: 3px; cursor: pointer }
+#list button:hover { background: var(--accent-soft) }
+#list button[aria-current=true] { background: var(--accent-soft); font-weight: 700 }
+#list .r { color: var(--muted); font-size: .8rem }
+#list i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px }
+.mapbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 10px }
+.mapbar > div { flex: 1 1 220px; min-width: 0 }
+.jump { display: flex; gap: 6px; flex-wrap: wrap }
+button.chip { font: inherit; font-size: .85rem; padding: 6px 10px; color: var(--fg); background: none; border: 1px solid var(--line); border-radius: 4px; cursor: pointer }
+button.chip:hover { border-color: var(--accent); color: var(--accent) }
+#map { height: 590px; background: var(--bg); border-radius: 4px; overflow: hidden }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; font-size: .84rem; color: var(--muted) }
+.legend span { display: inline-flex; align-items: center; gap: 5px }
+.legend b { width: 14px; height: 14px; border-radius: 2px; display: inline-block }
+.big { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; margin: 8px 0 12px }
+.big strong { font: 700 3rem/1 var(--display); color: var(--accent) }
+.big small { color: var(--muted); display: block }
+.sub { color: var(--muted); font-size: .9rem; margin: 2px 0 0 }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) 42px; gap: 2px 8px; font-size: .9rem; margin-bottom: 7px }
+.bar .t { grid-column: 1 / -1; height: 7px; background: var(--accent-soft); border-radius: 2px; position: relative }
+.bar .t i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--accent) }
+.bar .t u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--fg); text-decoration: none }
+.bar.low > span:first-child { font-weight: 700; color: var(--warn) }
+.bar.low .t i { background: var(--warn) }
+.bar em { font-style: normal; text-align: right }
+h3 { font-size: 1.12rem; margin: 14px 0 7px }
+.note { font-size: .86rem; color: var(--muted); margin: 6px 0 }
+.flag { font-size: .86rem; color: var(--warn); margin: 4px 0 }
+.lever { margin-bottom: 9px; font-size: .88rem }
+.lever div { display: flex; justify-content: space-between; gap: 8px }
+.lever output { font-weight: 700; white-space: nowrap }
+input[type=range] { width: 100%; accent-color: var(--accent); margin: 2px 0 0 }
+.lever small { color: var(--muted); display: block }
+.result { background: var(--accent-soft); border-radius: 4px; padding: 10px 12px; margin-bottom: 10px; font-size: .95rem }
+.result b { font-family: var(--display); font-size: 1.3rem }
+details { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 10px }
+summary { cursor: pointer; font-weight: 600 }
+table { border-collapse: collapse; font-size: .85rem; width: 100% }
+th, td { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top }
+td.n, th.n { text-align: right; white-space: nowrap }
+.scroll { overflow-x: auto }
+.below { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 14px; align-items: start }
+.below h2 { font-size: 1.35rem; margin-bottom: 8px }
+.below p, .below li { max-width: 68ch }
+.weights { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px 16px; margin-top: 10px }
+.leaflet-container { position: relative; outline: 0; font: inherit; -webkit-tap-highlight-color: transparent }
+.leaflet-pane, .leaflet-map-pane, .leaflet-overlay-pane, .leaflet-tooltip-pane, .leaflet-shadow-pane, .leaflet-marker-pane, .leaflet-popup-pane, .leaflet-control-container { position: absolute; left: 0; top: 0 }
+.leaflet-map-pane { z-index: 400 } .leaflet-overlay-pane { z-index: 400 } .leaflet-tooltip-pane { z-index: 650 }
+.leaflet-overlay-pane svg { position: absolute; max-width: none !important; max-height: none !important; left: 0; top: 0 }
+.leaflet-interactive { cursor: pointer }
+.leaflet-zoom-animated { transform-origin: 0 0 }
+.leaflet-top { position: absolute; top: 8px; left: 8px; z-index: 800 }
+.leaflet-bar a { display: block; width: 30px; height: 30px; line-height: 28px; text-align: center; font-size: 19px; text-decoration: none; color: var(--fg); background: var(--panel); border: 1px solid var(--line) }
+.leaflet-tooltip { position: absolute; padding: 4px 8px; font-size: .85rem; white-space: nowrap; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 3px; pointer-events: none }
+@media (max-width: 1180px) { .grid { grid-template-columns: minmax(0, 1fr) } #list { max-height: 240px } .col-map { order: -1 } #map { height: 480px } .below { grid-template-columns: minmax(0, 1fr) } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Rafah <span lang="ar" dir="rtl">رفاه</span></h1>
+    <p>Indice de bien-être des 75 provinces et préfectures du Maroc, sur une échelle de 1 à 100, calculé à partir de 18 indicateurs publics. Prototype de recherche indépendant, sans lien avec le HCP ni le ministère de la Santé.</p>
+  </header>
+
+  <div class="grid">
+    <nav class="panel" aria-label="Classement des provinces">
+      <label for="q">Chercher une province</label>
+      <input id="q" type="search" placeholder="Taza, Casablanca…">
+      <ul id="list"></ul>
+    </nav>
+
+    <section class="panel col-map" aria-label="Carte">
+      <div class="mapbar">
+        <div><label for="layer">Afficher sur la carte</label><select id="layer"></select></div>
+        <div class="jump" aria-label="Zoom rapide">
+          <button class="chip" id="z-all" type="button">Tout le pays</button>
+          <button class="chip" id="z-north" type="button">Nord</button>
+          <button class="chip" id="z-axis" type="button">Rabat-Casablanca</button>
+        </div>
+      </div>
+      <div id="map" role="img" aria-label="Carte des provinces colorées selon l'indicateur choisi"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <aside class="panel" id="sheet" aria-live="polite"></aside>
+  </div>
+
+  <div class="below">
+    <section class="panel">
+      <h2>Modifier les pondérations</h2>
+      <p class="note">Par défaut, les six dimensions pèsent autant. Déplacez un curseur pour recalculer les scores et le classement de toutes les provinces.</p>
+      <div class="weights" id="weights"></div>
+      <button class="chip" id="w-reset" type="button" style="margin-top:10px">Revenir aux poids égaux</button>
+      <h2 style="margin-top:18px">Solidité du résultat</h2>
+      <p id="valid"></p>
+      <div class="scroll"><table id="rob"></table></div>
+    </section>
+    <section class="panel">
+      <h2>Comment lire l'indice</h2>
+      <p>Chaque indicateur est ramené entre 1 et 100 avec des bornes fixes : une cible ODD quand elle existe, sinon les centiles 5 et 95 observés en 2024. Le score d'une dimension est la moyenne de ses trois indicateurs. L'indice est la moyenne géométrique des six dimensions, si bien qu'un point fort ne compense pas entièrement un point faible.</p>
+      <h3>D'où viennent les données</h3>
+      <p>data.gov.ma est utilisé en priorité dès qu'il publie une mesure fiable par province. Il alimente le score pour les centres de soins primaires, et la fiche et les couches de contexte pour les hôpitaux, les écoles, l'emploi, la CNSS et les structures sociales. Le portail ne publie pas par province l'eau, l'assainissement, l'électricité, l'analphabétisme ou la population : ces données viennent du recensement du HCP, et les médecins et les lits de la carte sanitaire.</p>
+      <p id="ene-note"></p>
+      <h3>Limites à garder en tête</h3>
+      <ul>
+        <li>L'offre de soins est comptée là où elle se situe, pas là où les patients vont se soigner. Une province voisine d'une grande ville, comme Moulay Yacoub, paraît moins dotée qu'elle ne l'est en pratique.</li>
+        <li>Les ratios sont instables dans les provinces peu peuplées, comme Tarfaya ou Aousserd.</li>
+        <li>La dimension la plus faible dépend en partie des bornes, qui ne sont pas de même nature partout. Elle signale une priorité à examiner, pas un verdict.</li>
+        <li>Le simulateur applique la formule. Il ne prédit ni un coût ni un effet réel sur la vie des habitants.</li>
+        <li>L'évolution affichée porte sur la pauvreté du HCP (2014-2024), le chômage (2017-2025) et le nombre d'établissements scolaires (2023-2026). L'évolution de Rafah lui-même n'est pas encore calculée.</li>
+        <li>Les listes de structures sociales comptent ce qui est publié. Un zéro peut signifier une structure absente ou une liste incomplète.</li>
+      </ul>
+      <details>
+        <summary>Les 18 indicateurs, leurs bornes et leurs sources</summary>
+        <div class="scroll"><table id="meta"></table></div>
+      </details>
+      <p class="note">Contours : geoBoundaries (OpenStreetMap, ODbL). Tracés de 2017, découpage en 75 provinces identique à celui du RGPH 2024.</p>
+    </section>
+  </div>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script id="geo" type="application/json">__GEO__</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const GEO = JSON.parse(document.getElementById("geo").textContent);
+const { dimensions: DIMS, indicators: INDS, provinces: PROV } = DATA;
+const byCode = new Map(PROV.map(p => [p.code, p]));
+const fmt = (x, d = 1) => Number(x).toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d });
+const CL = ["--c1", "--c2", "--c3", "--c4", "--c5"].map(v => getComputedStyle(document.documentElement).getPropertyValue(v).trim());
+const STEP = {
+  medecins: [0, 10, .5, "médecins"], essp: [0, 2, .1, "centres de santé"], lits: [0, 20, 1, "lits"], salaries: [0, 60, 5, "salariés"],
+  scolarisation: [0, 12, .5], assainissement: [0, 60, 1], electricite: [0, 14, .5], bidonville: [0, 26, .5], eau: [0, 60, 1], dechets: [0, 60, 1],
+};
+const state = { code: 6467, layer: "rafah", weights: DIMS.map(() => 1), sim: {} };
+
+function norm(x, i) {
+  const r = i.sens > 0 ? (x - i.L) / (i.U - i.L) : (i.U - x) / (i.U - i.L);
+  return Math.min(100, Math.max(1, 1 + 99 * r));
+}
+function dimScores(v) {
+  return DIMS.map((_, k) => {
+    const s = INDS.filter(i => i.dim === k).map(i => norm(v[i.id], i));
+    return s.reduce((a, b) => a + b, 0) / s.length;
+  });
+}
+function index(ds) {
+  const t = state.weights.reduce((a, b) => a + b, 0) || 1;
+  return Math.exp(ds.reduce((a, d, k) => a + Math.log(d) * state.weights[k] / t, 0));
+}
+function simValues(p) {
+  const v = { ...p.v };
+  for (const i of INDS) if (state.sim[i.id] && p.code === state.code) {
+    v[i.id] += i.sens > 0 ? state.sim[i.id] : -state.sim[i.id];
+    if (i.unit === "%") v[i.id] = Math.min(100, Math.max(0, v[i.id]));
+  }
+  return v;
+}
+function recompute() {
+  for (const p of PROV) { p.dims = dimScores(p.v); p.score = index(p.dims); }
+  const sorted = [...PROV].sort((a, b) => b.score - a.score);
+  sorted.forEach((p, n) => p.rank = n + 1);
+  state.mean = PROV.reduce((a, p) => a + p.score, 0) / PROV.length;
+  state.dimMean = DIMS.map((_, k) => PROV.reduce((a, p) => a + p.dims[k], 0) / PROV.length);
+  state.sorted = sorted;
+}
+const scoreClass = s => s < 25 ? 0 : s < 40 ? 1 : s < 55 ? 2 : s < 70 ? 3 : 4;
+const povClass = m => m >= 13 ? 0 : m >= 9 ? 1 : m >= 6 ? 2 : m >= 3 ? 3 : 4;
+const CTX = {
+  ene_chomage_2025: { label: "Chômage, enquête emploi 2025 (data.gov.ma, hors indice)", unit: " %", worseHigh: true },
+  hop_100k: { label: "Hôpitaux publics pour 100 000 habitants (data.gov.ma, hors indice)", unit: "" },
+  secondaire_10k: { label: "Collèges et lycées publics pour 10 000 habitants (data.gov.ma, hors indice)", unit: "" },
+  jeunes_100k: { label: "Maisons de jeunes pour 100 000 habitants (data.gov.ma, hors indice)", unit: "" },
+};
+function breaks(id) {
+  const v = PROV.map(p => p.ctx[id]).filter(x => x !== null).sort((a, b) => a - b);
+  return [.2, .4, .6, .8].map(q => v[Math.floor(q * (v.length - 1))]);
+}
+function ctxClass(p, id) {
+  const x = p.ctx[id];
+  if (x === null) return null;
+  const k = breaks(id).filter(b => x > b).length;
+  return CTX[id].worseHigh ? 4 - k : k;
+}
+function layerValue(p) {
+  if (state.layer === "rafah") return p.score;
+  if (state.layer === "mpi") return p.mpi24;
+  if (CTX[state.layer]) return p.ctx[state.layer];
+  return p.dims[+state.layer];
+}
+function colorOf(p) {
+  if (state.layer === "mpi") return CL[povClass(p.mpi24)];
+  if (CTX[state.layer]) { const k = ctxClass(p, state.layer); return k === null ? "var(--line)" : CL[k]; }
+  return CL[scoreClass(layerValue(p))];
+}
+function tipValue(p) {
+  if (state.layer === "mpi") return fmt(p.mpi24) + " %";
+  if (CTX[state.layer]) return p.ctx[state.layer] === null ? "non publié" : fmt(p.ctx[state.layer]) + CTX[state.layer].unit;
+  return fmt(layerValue(p));
+}
+function spark(arr) {
+  const pts = arr.map((v, i) => [i, v]).filter(a => a[1] !== null);
+  if (pts.length < 2) return `<p class="note">Chômage selon l'enquête emploi : non publié pour cette province.</p>`;
+  const vals = pts.map(a => a[1]), lo = Math.min(...vals), hi = Math.max(...vals), w = 300, h = 54;
+  const X = i => 8 + i / 8 * (w - 16), Y = v => h - 8 - (hi === lo ? .5 : (v - lo) / (hi - lo)) * (h - 16);
+  const last = pts[pts.length - 1], first = pts[0];
+  return `<p class="note" style="margin-bottom:2px">Chômage selon l'enquête emploi : ${fmt(first[1])} % en ${2017 + first[0]}, ${fmt(last[1])} % en ${2017 + last[0]}. Échantillon, mesure différente du recensement.</p>
+    <svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" role="img" aria-label="Évolution annuelle du chômage"><polyline fill="none" stroke="var(--accent)" stroke-width="2" points="${pts.map(a => X(a[0]) + "," + Y(a[1])).join(" ")}"/><circle cx="${X(last[0])}" cy="${Y(last[1])}" r="3.5" fill="var(--accent)"/></svg>`;
+}
+function ctxTable(p) {
+  const c = p.ctx;
+  const rows = [
+    ["Hôpitaux publics (2025)", fmt(c.hopitaux, 0)],
+    ["Centres de soins primaires (2025)", fmt(c.essp_2025, 0)],
+    ["Écoles primaires publiques (2026, 2023)", fmt(c.primaires, 0) + " · " + fmt(c.primaires_2023, 0)],
+    ["Collèges publics (2026, 2023)", fmt(c.colleges, 0) + " · " + fmt(c.colleges_2023, 0)],
+    ["Lycées publics (2026, 2023)", fmt(c.lycees, 0) + " · " + fmt(c.lycees_2023, 0)],
+    ["Maisons de jeunes listées", fmt(c.maisons_jeunes, 0)],
+    ["Centres pour les femmes listés", fmt(c.centres_femmes, 0)],
+    ["Centres d'orientation handicap listés", fmt(c.centres_handicap, 0)],
+    ["Unités de protection de l'enfance listées", fmt(c.unites_enfance, 0)],
+    ["Salariés CNSS pour 1 000 hab., région (2022)", fmt(c.cnss_region)],
+    ["Entreprises CNSS pour 1 000 hab., région (2022)", fmt(c.entreprises_region)],
+  ];
+  return `<table>${rows.map(r => `<tr><td>${r[0]}</td><td class="n">${r[1]}</td></tr>`).join("")}</table>`;
+}
+
+const map = L.map("map", { zoomSnap: .25, attributionControl: false, minZoom: 4 });
+const shapes = L.geoJSON(GEO, {
+  style: f => ({ weight: .7, color: "var(--land-line)", fillOpacity: 1 }),
+  onEachFeature(f, layer) {
+    const p = byCode.get(f.properties.code);
+    layer.on("click", () => select(p.code));
+    layer.bindTooltip(() => `<b>${p.nom}</b> : ${tipValue(p)}`, { sticky: true });
+  },
+}).addTo(map);
+const zooms = { all: [[20.6, -17.6], [36.1, -0.9]], north: [[30.8, -10.2], [36, -1]], axis: [[33.2, -8.1], [34.2, -6.5]] };
+map.fitBounds(zooms.all);
+let userMoved = false;
+map.on("zoomstart dragstart", e => { if (e.originalEvent || e.type === "dragstart") userMoved = true; });
+new ResizeObserver(() => { map.invalidateSize(); if (!userMoved) map.fitBounds(zooms.all, { animate: false }); }).observe(document.getElementById("map"));
+for (const k of ["all", "north", "axis"]) document.getElementById("z-" + k).onclick = () => map.fitBounds(zooms[k]);
+
+function paint() {
+  shapes.eachLayer(l => {
+    const p = byCode.get(l.feature.properties.code);
+    const on = p.code === state.code;
+    l.setStyle({ fillColor: colorOf(p), color: on ? "var(--fg)" : "var(--land-line)", weight: on ? 2.4 : .7, dashArray: !on && p.flags.length ? "3 2" : null });
+    if (on) l.bringToFront();
+  });
+  let lg = state.layer === "mpi" ? ["13 % ou plus", "9 à 13 %", "6 à 9 %", "3 à 6 %", "moins de 3 %"] : ["moins de 25", "25 à 40", "40 à 55", "55 à 70", "70 ou plus"];
+  if (CTX[state.layer]) {
+    const b = breaks(state.layer).map(x => fmt(x));
+    lg = [`jusqu'à ${b[0]}`, `${b[0]} à ${b[1]}`, `${b[1]} à ${b[2]}`, `${b[2]} à ${b[3]}`, `plus de ${b[3]}`];
+    if (CTX[state.layer].worseHigh) lg.reverse();
+  }
+  document.getElementById("legend").innerHTML = lg.map((t, k) => `<span><b style="background:${CL[k]}"></b>${t}</span>`).join("") + `<span>Pointillés : donnée imputée ou particulière (voir la fiche)</span>`;
+}
+function renderList() {
+  const q = document.getElementById("q").value.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  document.getElementById("list").innerHTML = state.sorted
+    .filter(p => !q || p.nom.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(q))
+    .map(p => `<li><button type="button" data-c="${p.code}" aria-current="${p.code === state.code}"><span class="r">${p.rank}</span><span><i style="background:${CL[scoreClass(p.score)]}"></i>${p.nom}</span><span>${fmt(p.score)}</span></button></li>`).join("");
+}
+document.getElementById("list").addEventListener("click", e => { const b = e.target.closest("button"); if (b) select(+b.dataset.c, true); });
+document.getElementById("q").addEventListener("input", renderList);
+
+function simResult(p) {
+  const ds = dimScores(simValues(p)), s = index(ds);
+  const rank = 1 + PROV.filter(o => o !== p && o.score > s).length;
+  return { ds, s, rank };
+}
+function renderSheet() {
+  const p = byCode.get(state.code);
+  const { ds, s, rank } = simResult(p);
+  const weak = p.dims.indexOf(Math.min(...p.dims));
+  const active = Object.values(state.sim).some(Boolean);
+  const bars = p.dims.map((d, k) => `<div class="bar ${k === weak ? "low" : ""}"><span>${DIMS[k]}</span><em>${fmt(d)}</em><div class="t"><i style="width:${d}%"></i><u style="left:${state.dimMean[k]}%" title="Moyenne des provinces"></u></div></div>`).join("");
+  const gap = p.score - state.mean;
+  const levers = INDS.filter(i => i.lever).map(i => {
+    const [a, b, st, noun] = STEP[i.id];
+    const d = state.sim[i.id] || 0;
+    const cap = i.sens > 0 ? p.v[i.id] >= i.U : p.v[i.id] <= i.L;
+    const room = i.unit === "%" ? (i.sens > 0 ? 100 - p.v[i.id] : p.v[i.id]) : b;
+    const max = Math.max(st, Math.min(b, Math.floor(room / st) * st));
+    const nb = noun && d ? ` soit environ ${fmt(d * p.population / (i.id === "salaries" ? 1000 : 10000), 0)} ${noun}` : "";
+    const sign = i.sens > 0 ? "+" : "−";
+    return `<div class="lever"><div><label for="l-${i.id}">${i.label}</label><output>${sign}${fmt(d, st < 1 ? 1 : 0)}</output></div><input id="l-${i.id}" type="range" min="${a}" max="${max}" step="${st}" value="${Math.min(d, max)}" data-i="${i.id}"><small>Aujourd'hui : ${fmt(p.v[i.id])} ${i.unit}${cap ? ", déjà au niveau de la borne : pas de gain possible" : ""}${nb}</small></div>`;
+  }).join("");
+  const rows = INDS.map(i => `<tr><td>${i.label}</td><td class="n">${fmt(p.v[i.id])}</td><td class="n">${fmt(norm(p.v[i.id], i), 0)}</td></tr>`).join("");
+  document.getElementById("sheet").innerHTML = `
+    <h2 style="font-size:1.55rem">${p.nom}</h2>
+    <p class="sub">${p.type} · ${p.region} · ${fmt(p.population, 0)} habitants</p>
+    <div class="big"><strong>${fmt(p.score)}</strong><div><small>Rang ${p.rank} sur 75</small><small>${gap >= 0 ? "+" : "−"}${fmt(Math.abs(gap))} par rapport à la moyenne des provinces</small><small>Rang probable selon les poids : ${p.rangP05} à ${p.rangP95}</small></div></div>
+    ${bars}
+    <p class="note">Le trait vertical marque la moyenne des provinces. Dimension la plus faible : <b>${DIMS[weak]}</b>.</p>
+    <p class="note">Pauvreté multidimensionnelle (HCP) : ${fmt(p.mpi14)} % en 2014, ${fmt(p.mpi24)} % en 2024.</p>
+    ${spark(p.ene.chomage)}
+    ${p.flags.map(f => `<p class="flag">${f}</p>`).join("")}
+    <h3>Simuler une amélioration</h3>
+    <div class="result">${active ? `Le score passe de ${fmt(p.score)} à <b>${fmt(s)}</b> et le rang de ${p.rank} à <b>${rank}</b>. Les 74 autres provinces ne changent pas.` : "Déplacez un curseur pour voir l'effet sur le score de cette province."}</div>
+    ${levers}
+    <button class="chip" id="sim-reset" type="button">Remettre les curseurs à zéro</button>
+    <details><summary>Autres données de data.gov.ma (hors score)</summary><div class="scroll">${ctxTable(p)}</div></details>
+    <details><summary>Valeurs et scores des 18 indicateurs</summary><div class="scroll"><table><tr><th>Indicateur</th><th class="n">Valeur</th><th class="n">Score</th></tr>${rows}</table></div></details>`;
+}
+document.getElementById("sheet").addEventListener("input", e => {
+  if (!e.target.dataset.i) return;
+  state.sim[e.target.dataset.i] = +e.target.value;
+  const id = e.target.id; renderSheet();
+  document.getElementById(id).focus();
+});
+document.getElementById("sheet").addEventListener("click", e => { if (e.target.id === "sim-reset") { state.sim = {}; renderSheet(); } });
+function select(code, pan) {
+  state.code = code; state.sim = {};
+  paint(); renderList(); renderSheet();
+  if (pan) shapes.eachLayer(l => { if (l.feature.properties.code === code && map.getBounds && !map.getBounds().contains(l.getBounds())) map.fitBounds(l.getBounds().pad(1.2)); });
+}
+function refresh() { recompute(); paint(); renderList(); renderSheet(); }
+
+document.getElementById("layer").innerHTML = `<option value="rafah">Indice Rafah</option>` + DIMS.map((d, k) => `<option value="${k}">${d}</option>`).join("") + `<option value="mpi">Pauvreté multidimensionnelle du HCP (hors indice)</option>` + Object.entries(CTX).map(([k, c]) => `<option value="${k}">${c.label}</option>`).join("");
+document.getElementById("layer").onchange = e => { state.layer = e.target.value; paint(); };
+document.getElementById("weights").innerHTML = DIMS.map((d, k) => `<div><label for="w-${k}">${d}</label><input id="w-${k}" type="range" min="0" max="3" step=".25" value="1" data-k="${k}"></div>`).join("");
+document.getElementById("weights").addEventListener("input", e => { state.weights[+e.target.dataset.k] = +e.target.value; refresh(); });
+document.getElementById("w-reset").onclick = () => { state.weights = DIMS.map(() => 1); document.querySelectorAll("#weights input").forEach(i => i.value = 1); refresh(); };
+
+const V = DATA.validation;
+document.getElementById("ene-note").textContent = `Le chômage de l'enquête emploi du portail reste hors score. Il manque pour 4 provinces et sa corrélation de rang avec la pauvreté est de ${fmt(V.chomage_portail_pauvrete, 2)} : il est plus faible dans les provinces rurales pauvres, où le recensement donne une image différente (${fmt(V.chomage_rgph_pauvrete, 2)}).`;
+document.getElementById("valid").textContent = `L'indice suit de près la pauvreté multidimensionnelle du HCP, qui n'entre pas dans son calcul : corrélation de rang de ${fmt(V.spearman, 2)}. Les deux mesures partagent une partie de leurs sources, notamment le logement et l'éducation. Avec les seules dimensions Santé et Emploi, qui ne se recoupent pas avec elle, la corrélation reste de ${fmt(V.spearman_sans_chevauchement, 2)}.`;
+document.getElementById("rob").innerHTML = `<tr><th>Variante testée</th><th class="n">Corrélation de rang</th><th class="n">Écart de rang moyen</th><th class="n">15 derniers conservés</th></tr>` + DATA.robustness.map(r => `<tr><td>${r.scenario}</td><td class="n">${fmt(r.spearman, 2)}</td><td class="n">${fmt(r.ecart_rang_moyen)}</td><td class="n">${r.bas15_conserves} sur 15</td></tr>`).join("");
+document.getElementById("meta").innerHTML = `<tr><th>Indicateur</th><th>Dimension</th><th class="n">Sens</th><th class="n">Borne basse</th><th class="n">Borne haute</th><th>Base des bornes</th><th>Source</th></tr>` + INDS.map(i => `<tr><td>${i.label}</td><td>${DIMS[i.dim]}</td><td class="n">${i.sens > 0 ? "+" : "−"}</td><td class="n">${fmt(i.L)}</td><td class="n">${fmt(i.U)}</td><td>${i.bornes}</td><td>${i.source}</td></tr>`).join("");
+
+recompute(); paint(); renderList(); renderSheet();
+window.__rafah = { PROV, state, select };
+</script>
