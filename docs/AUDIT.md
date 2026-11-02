@@ -52,6 +52,8 @@ Aucun de ces points n'a modifié la formule : ce sont des décisions à prendre 
 
 - 27 contours sur 75 étaient géométriquement invalides, en raison de l'arrondi des coordonnées. Ils sont désormais arrondis sur une grille qui garantit leur validité, avec une surface conservée à moins de 2 % près (contrôle dans `data/processed/controle_geometries.json`). Aucun recouvrement de plus de 1 % n'est détecté entre deux territoires. Les trous entre contours n'ont pas été mesurés.
 
+- PostGIS a révélé des micro-fragments dans le fichier de contours, dont 66 pour Oued Ed-Dahab, dispersés jusqu'à la limite de Figuig. Les parties de moins de 1 % de la surface principale d'un territoire sont retirées. Elles étaient invisibles à l'écran et n'entraient pas dans les scores, mais faussaient les voisinages et les emprises.
+
 ## Hors de portée de cet audit
 
 - Exactitude des fichiers publiés par les producteurs eux-mêmes.

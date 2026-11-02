@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from shapely import make_valid, set_precision
-from shapely.geometry import mapping, shape
+from shapely.geometry import MultiPolygon, mapping, shape
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
@@ -386,7 +386,7 @@ def validation(d, dims, idx):
 def geometry(d):
     g = json.loads((RAW / "geoBoundaries-MAR-ADM2_simplified.geojson").read_text(encoding="utf-8"))
     idx = {key(v): c for c, v in d.nom.items()}
-    feats, unmatched = [], []
+    feats, unmatched, removed = [], [], 0
     def round_c(c):
         return [round(c[0], 3), round(c[1], 3)] if isinstance(c[0], (int, float)) else [round_c(x) for x in c]
     for f in g["features"]:
@@ -400,10 +400,16 @@ def geometry(d):
         src = make_valid(shape(f["geometry"]))
         clean = set_precision(src, .001)
         assert clean.geom_type in ("Polygon", "MultiPolygon") and clean.is_valid, name
+        # Le fichier source contient des micro-fragments loin du territoire (jusqu'à Figuig pour Oued Ed-Dahab).
+        parts = list(clean.geoms) if clean.geom_type == "MultiPolygon" else [clean]
+        keep = [p for p in parts if p.area >= .01 * max(q.area for q in parts)]
+        removed += len(parts) - len(keep)
+        clean = keep[0] if len(keep) == 1 else MultiPolygon(keep)
         assert abs(clean.area - src.area) / src.area < .02, (name, clean.area, src.area)
         g = mapping(clean)
         feats.append(dict(type="Feature", properties=dict(code=int(code)), geometry=dict(type=g["type"], coordinates=round_c(g["coordinates"]))))
     assert not unmatched and len({f["properties"]["code"] for f in feats}) == 75, unmatched
+    print("Micro-fragments retirés des contours :", removed)
     return dict(type="FeatureCollection", features=feats)
 
 

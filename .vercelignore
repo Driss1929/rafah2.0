@@ -2,5 +2,7 @@ data/
 pipeline/
 site/
 docs/
+backend/
+infra/
 README.md
 requirements.txt

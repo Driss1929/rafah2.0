@@ -162,6 +162,8 @@ def fill(text):
     for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block), ("pro_table", pro_table), ("region_profiles", region_profiles)]:
         if "{{" + key + "}}" in text:
             values[key] = fn()
+    if "{{geo_json}}" in text:
+        values["geo_json"] = GEO_TEXT.replace("</", "<\\/")
     if "{{data_json}}" in text:
         values["data_json"] = json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")
     text = re.sub(r"\{\{(\w+)\}\}", lambda m: str(values[m[1]]), text)
@@ -173,7 +175,8 @@ def main():
         src = page.read_text(encoding="utf-8")
         title = re.match(r"<!-- title: (.*?) -->", src)[1]
         body = fill(src.split("-->", 1)[1])
-        (APP / page.name).write_text(f'{HEAD}<title>{title}</title>{FONTS}<style>{CSS}</style></head><body>{nav(page.stem)}<main class="page">{body}</main>{FOOT}</body></html>\n', encoding="utf-8")
+        extra = '<link rel="stylesheet" href="vendor/maplibre-gl.css">' if page.stem == "carte-maplibre" else ""
+        (APP / page.name).write_text(f'{HEAD}<title>{title}</title>{FONTS}{extra}<style>{CSS}</style></head><body>{nav(page.stem)}<main class="page">{body}</main>{FOOT}</body></html>\n', encoding="utf-8")
     ex = (SITE / "explorer.template.html").read_text(encoding="utf-8")
     for mark, value in [("__NAV__", nav("explorer")), ("__FOOT__", FOOT), ("__SITECSS__", CSS), ("__FONTS__", FONTS),
                         ("__DATA__", json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")), ("__GEO__", GEO_TEXT.replace("</", "<\\/"))]:

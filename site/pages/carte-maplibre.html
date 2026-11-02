@@ -1,0 +1,61 @@
+<!-- title: Carte MapLibre -->
+<section>
+  <div class="eyebrow">Version expérimentale</div>
+  <h1>Carte MapLibre</h1>
+  <p class="lead">La même carte et les mêmes scores qu'Explorer, affichés avec un rendu WebGL. Explorer reste la version de référence.</p>
+  <div class="ctl" style="max-width:520px"><div><label for="ml-layer">Afficher</label><select id="ml-layer"></select></div></div>
+  <div id="ml-map" style="height:620px;border:1px solid var(--line);border-radius:4px;background:var(--panel)"></div>
+  <p class="legend-h" style="margin-top:8px"><span><b class="h0"></b>moins de 25</span><span><b class="h1"></b>25 à 40</span><span><b class="h2"></b>40 à 55</span><span><b class="h3"></b>55 à 70</span><span><b class="h4"></b>70 ou plus</span></p>
+  <p class="fine" id="ml-note" role="status"></p>
+  <p class="fine">Cliquez sur un territoire pour ouvrir sa fiche. Contours : geoBoundaries (OpenStreetMap, ODbL). Aucun fond de carte n'est chargé.</p>
+</section>
+<script src="vendor/maplibre-gl.js"></script>
+<script>
+const DATA = {{data_json}};
+const GEO = {{geo_json}};
+const { dimensions: DIMS, indicators: INDS, provinces: PROV } = DATA;
+const fmt = x => Number(x).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const norm = (x, i) => Math.min(100, Math.max(1, 1 + 99 * (i.sens > 0 ? x - i.L : i.U - x) / (i.U - i.L)));
+const byCode = new Map();
+for (const p of PROV) {
+  p.dims = DIMS.map((_, k) => { const s = INDS.filter(i => i.dim === k).map(i => norm(p.v[i.id], i)); return s.reduce((a, b) => a + b) / 3; });
+  p.score = Math.exp(p.dims.reduce((a, d) => a + Math.log(d), 0) / 6);
+  byCode.set(p.code, p);
+}
+[...PROV].sort((a, b) => b.score - a.score).forEach((p, n) => p.rank = n + 1);
+const select = document.getElementById("ml-layer");
+select.innerHTML = `<option value="rafah">Indice Rafah</option>` + DIMS.map((d, k) => `<option value="${k}">${d}</option>`).join("");
+const value = p => select.value === "rafah" ? p.score : p.dims[+select.value];
+const css = getComputedStyle(document.documentElement), color = n => css.getPropertyValue(n).trim();
+function features() {
+  for (const f of GEO.features) { f.id = f.properties.code; f.properties.value = value(byCode.get(f.properties.code)); }
+  return GEO;
+}
+if (!window.maplibregl) {
+  document.getElementById("ml-map").textContent = "Cette carte n'a pas pu se charger. Utilisez la carte d'Explorer.";
+} else {
+  addEventListener("load", () => {
+  const map = new maplibregl.Map({ container: "ml-map", bounds: [[-17.6, 20.6], [-0.9, 36.1]], fitBoundsOptions: { padding: 16 }, attributionControl: false,
+    style: { version: 8, sources: {}, layers: [{ id: "fond", type: "background", paint: { "background-color": color("--bg") } }] } });
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }));
+  window.__ml = { map, ready: false };
+  map.on("error", e => { console.error("MapLibre", e.error && e.error.message); (window.__ml.errors ||= []).push(e.error && e.error.message); });
+  const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false });
+  map.on("load", () => {
+    map.addSource("t", { type: "geojson", data: features() });
+    map.addLayer({ id: "fill", type: "fill", source: "t", paint: { "fill-color": ["step", ["get", "value"], color("--c1"), 25, color("--c2"), 40, color("--c3"), 55, color("--c4"), 70, color("--c5")] } });
+    map.addLayer({ id: "line", type: "line", source: "t", paint: { "line-color": color("--land-line"), "line-width": .7 } });
+    select.onchange = () => map.getSource("t").setData(features());
+    map.on("mousemove", "fill", e => {
+      const p = byCode.get(e.features[0].properties.code);
+      map.getCanvas().style.cursor = "pointer";
+      popup.setLngLat(e.lngLat).setText(`${p.nom} : ${fmt(value(p))}, rang ${p.rank}, fiabilité ${p.fiab.toLowerCase()}`).addTo(map);
+    });
+    map.on("mouseleave", "fill", () => { map.getCanvas().style.cursor = ""; popup.remove(); });
+    map.on("click", "fill", e => { location.href = `explorer.html#t${e.features[0].properties.code}_${select.value}`; });
+    window.__ml.ready = true;
+  });
+  setTimeout(() => { if (!window.__ml.ready) document.getElementById("ml-note").textContent = "Cette carte met du temps à se charger. Si elle reste vide, utilisez la carte d'Explorer."; }, 8000);
+  });
+}
+</script>
