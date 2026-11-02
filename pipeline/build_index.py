@@ -3,6 +3,7 @@
 Usage : python build_index.py [racine_du_projet]
 Entrées : data/raw/  -  Sorties : data/processed/
 """
+import hashlib
 import json
 import re
 import sys
@@ -44,6 +45,8 @@ INDICATORS = [
     dict(id="enclavement", dim=5, label="Distance moyenne des logements à la route goudronnée", sens=-1, lever=False, unit="km", source="HCP, RGPH 2024", low=None, high=None, cible=None),
 ]
 IDS = [i["id"] for i in INDICATORS]
+# Valeurs obtenues par somme ou ratio de chiffres publiés ; les autres sont reprises telles quelles.
+CALCULATED = {"medecins", "essp", "lits", "secondaire", "salaries", "etablissements", "bois", "dechets", "ecart_alpha"}
 
 ALIASES = {
     "rehamena": "rehamna", "rhamna": "rehamna", "taroudant": "taroudannt", "fkihbensaleh": "fquihbensalah",
@@ -444,7 +447,24 @@ def main():
         m["bornes"] = m["cible"] or "centiles 5-95 (2024)"
     provinces = []
     for c, r in d.iterrows():
-        provinces.append(dict(code=int(c), nom=r.nom, type=r.type, region=r.region, population=int(r.population),
+        status = {i: ("calculé" if i in CALCULATED else "publié") for i in IDS}
+        reasons = []
+        if r._imput_medecins:
+            status["medecins"] = "imputé"
+            reasons.append("Médecins : valeur régionale utilisée")
+        if r.lits == 0:
+            status["lits"] = "déduit"
+            reasons.append("Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère")
+        if r._enclavement_na:
+            status["enclavement"] = "convention"
+        small = r.population < 100000
+        if small:
+            reasons.append("Moins de 100 000 habitants : ratios instables")
+        lo, hi = int(round(stab.rang_p05[c])), int(round(stab.rang_p95[c]))
+        if hi - lo >= 15:
+            reasons.append(f"Rang sensible aux pondérations : {lo} à {hi}")
+        fiab = "Prudence" if r._imput_medecins or small else "Moyenne" if reasons else "Élevée"
+        provinces.append(dict(code=int(c), nom=r.nom, type=r.type, region=r.region, population=int(r.population), status=status, fiab=fiab, fiabRaisons=reasons,
                               v={i: round(float(r[i]), 3) for i in IDS}, mpi24=round(r.mpi_2024, 1), mpi14=round(r.mpi_2014, 1),
                               ctx={k: (None if pd.isna(x) else round(float(x), 3)) for k, x in ctx.loc[c].items()},
                               ene={k: [None if (c not in s.index or pd.isna(x)) else float(x) for x in (s.loc[c] if c in s.index else [None] * 9)] for k, s in ene.items()},
@@ -455,6 +475,11 @@ def main():
     (OUT / "rafah.json").write_text(json.dumps(dict(dimensions=DIMENSIONS, indicators=meta, provinces=provinces, validation=val, robustness=res, pca=pca_w), ensure_ascii=False), encoding="utf-8")
     (OUT / "provinces.geojson").write_text(json.dumps(geometry(d), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     pd.DataFrame(meta).to_csv(OUT / "rafah_metadonnees.csv", encoding="utf-8-sig", index=False)
+    pd.DataFrame([dict(code_hcp=p["code"], province=p["nom"], fiabilite=p["fiab"], raisons=" ; ".join(p["fiabRaisons"])) for p in provinces]).to_csv(OUT / "rafah_fiabilite.csv", encoding="utf-8-sig", index=False)
+    pd.DataFrame([dict(fichier=p.relative_to(RAW).as_posix(), octets=p.stat().st_size, sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+                  for p in sorted(RAW.rglob("*")) if p.is_file()]).to_csv(OUT / "sources_empreintes.csv", index=False)
+    print("Fiabilité :", pd.Series([p["fiab"] for p in provinces]).value_counts().to_dict())
+    print("Prudence :", [p["nom"] for p in provinces if p["fiab"] == "Prudence"])
 
     sys.stdout.reconfigure(encoding="utf-8")
     print(d[IDS].describe().T[["min", "mean", "max"]].round(2))

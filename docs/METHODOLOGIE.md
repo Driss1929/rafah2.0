@@ -97,6 +97,20 @@ Le signe et la force correspondent à l'attente de la fiche. Le chiffre de −0,
 
 La fourchette de rang de chaque fiche vient de 5 000 tirages aléatoires de poids (Dirichlet, paramètre 4, graine fixe). Sa largeur moyenne est de 10 rangs : un écart de quelques rangs entre deux provinces ne doit pas être surinterprété.
 
+## Statut et fiabilité des données
+
+Chaque valeur porte un statut : publiée, calculée, déduite, imputée ou conventionnelle. Chaque province reçoit aussi un niveau de fiabilité (`data/processed/rafah_fiabilite.csv`) :
+
+- **Prudence** : une valeur imputée, ou moins de 100 000 habitants.
+- **Moyenne** : un 0 déduit, ou une fourchette de rang d'au moins 15 places.
+- **Élevée** : aucun de ces cas.
+
+Cette règle est un repère de lecture choisi pour ce projet. Les seuils de 100 000 habitants et de 15 places sont des conventions, et ce n'est pas une mesure statistique de l'erreur.
+
+## Reproductibilité
+
+`pipeline/test_rafah.py` recalcule les 75 scores indépendamment du pipeline et contrôle les totaux officiels, les taux de pauvreté publiés par le HCP, l'échelle et l'isolement des simulations. `data/processed/sources_empreintes.csv` donne l'empreinte SHA-256 de chaque fichier source utilisé pour cette version.
+
 ## Limites
 
 1. L'offre de soins est comptée sur le lieu d'implantation. Les hôpitaux régionaux de Rabat gonflent son score, et les provinces voisines des grandes villes sont pénalisées.

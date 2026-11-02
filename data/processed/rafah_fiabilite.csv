@@ -1,0 +1,76 @@
+﻿code_hcp,province,fiabilite,raisons
+1511,Tanger-Assilah,Élevée,
+1573,M'diq-Fnideq,Moyenne,Rang sensible aux pondérations : 20 à 45
+1571,Tétouan,Élevée,
+1227,Fahs-Anjra,Prudence,Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère ; Moins de 100 000 habitants : ratios instables ; Rang sensible aux pondérations : 48 à 69
+1331,Larache,Élevée,
+1051,Al Hoceima,Moyenne,Rang sensible aux pondérations : 50 à 67
+1151,Chefchaouen,Élevée,
+1405,Ouezzane,Élevée,
+2411,Oujda-Angad,Élevée,
+2381,Nador,Élevée,
+2167,Driouch,Élevée,
+2275,Jerada,Moyenne,Rang sensible aux pondérations : 45 à 68
+2113,Berkane,Élevée,
+2533,Taourirt,Moyenne,Rang sensible aux pondérations : 53 à 68
+2265,Guercif,Élevée,
+2251,Figuig,Élevée,
+3231,Fès,Élevée,
+3061,Meknès,Élevée,
+3171,El Hajeb,Moyenne,Rang sensible aux pondérations : 43 à 58
+3271,Ifrane,Élevée,
+3591,Moulay Yacoub,Moyenne,Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère
+3451,Sefrou,Élevée,
+3131,Boulemane,Élevée,
+3531,Taounate,Élevée,
+3561,Taza,Élevée,
+4421,Rabat,Élevée,
+4441,Salé,Élevée,
+4501,Skhirate-Témara,Élevée,
+4281,Kénitra,Élevée,
+4291,Khémisset,Élevée,
+4481,Sidi Kacem,Élevée,
+4491,Sidi Slimane,Moyenne,Rang sensible aux pondérations : 53 à 70
+5091,Béni Mellal,Élevée,
+5081,Azilal,Élevée,
+5255,Fquih Ben Salah,Élevée,
+5301,Khénifra,Élevée,
+5311,Khouribga,Élevée,
+6141,Casablanca,Élevée,
+6371,Mohammadia,Élevée,
+6181,El Jadida,Élevée,
+6385,Nouaceur,Élevée,
+6355,Médiouna,Moyenne,Rang sensible aux pondérations : 27 à 51
+6111,Benslimane,Élevée,
+6117,Berrechid,Élevée,
+6461,Settat,Élevée,
+6467,Sidi Bennour,Élevée,
+7351,Marrakech,Élevée,
+7161,Chichaoua,Élevée,
+7041,Al Haouz,Élevée,
+7191,El Kelâa Des-Sraghna,Élevée,
+7211,Essaouira,Moyenne,Rang sensible aux pondérations : 52 à 68
+7427,Rehamna,Élevée,
+7431,Safi,Élevée,
+7585,Youssoufia,Élevée,
+8201,Errachidia,Élevée,
+8401,Ouarzazate,Élevée,
+8363,Midelt,Élevée,
+8577,Tinghir,Élevée,
+8587,Zagora,Élevée,
+9001,Agadir-Ida-Ou-Tanane,Élevée,
+9273,Inezgane-Aït Melloul,Moyenne,Rang sensible aux pondérations : 12 à 30
+9163,Chtouka-Aït Baha,Moyenne,Rang sensible aux pondérations : 32 à 55
+9541,Taroudannt,Élevée,
+9581,Tiznit,Moyenne,Rang sensible aux pondérations : 15 à 31
+9551,Tata,Moyenne,Rang sensible aux pondérations : 40 à 59
+10261,Guelmim,Élevée,
+10071,Assa-Zag,Prudence,Moins de 100 000 habitants : ratios instables ; Rang sensible aux pondérations : 14 à 32
+10521,Tan-Tan,Prudence,Moins de 100 000 habitants : ratios instables
+10473,Sidi Ifni,Moyenne,Rang sensible aux pondérations : 39 à 56
+11321,Laâyoune,Élevée,
+11121,Boujdour,Prudence,Moins de 100 000 habitants : ratios instables
+11537,Tarfaya,Prudence,Moins de 100 000 habitants : ratios instables
+11221,Es-Semara,Prudence,Moins de 100 000 habitants : ratios instables
+12391,Oued Ed-Dahab,Élevée,
+12066,Aousserd,Prudence,Médecins : valeur régionale utilisée ; Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère ; Moins de 100 000 habitants : ratios instables

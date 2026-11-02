@@ -30,6 +30,12 @@ python pipeline/build_index.py
 python pipeline/build_app.py
 ```
 
+Pour contrôler les résultats, même sans les données brutes :
+
+```bash
+python pipeline/test_rafah.py
+```
+
 La page charge Leaflet depuis cdnjs et ses polices depuis Google Fonts : elle a besoin d'Internet. Le jour de la démonstration, prévoir une connexion ou le lien publié.
 
 ## Sources (`data/raw/`)
