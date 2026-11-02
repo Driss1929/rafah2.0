@@ -63,6 +63,23 @@ with open(OUT / "provenance_sources.csv", "w", encoding="utf-8-sig", newline="")
     for s in SOURCES:
         assert s[0] in hashes, s[0]
         w.writerow([s[0], s[1], s[2], s[3], EXTRAIT, s[4], s[5], hashes[s[0]]])
+# Registre des droits : ce qui n'a pas été vérifié juridiquement reste marqué comme tel.
+YEARS = {"hcp_national": "2024", "hcp_cee": "2023/2024", "hcp_pauvrete": "2014, 2024", "cartesanitaire": "2024", "geoBoundaries": "2017", "essp-2024": "2024", "essp-2025": "2025", "hopitaux-2025": "2025", "chomage_prov": "2017-2025", "txact": "2017-2025", "txemp": "2017-2025", "nombre-des-s": "2022", "entreprises-": "2022", "juillet-2026": "2026", "maisons": "Non indiquée", "reseau-des-maisons": "Non indiquée", "multi": "Non indiquée"}
+def levels(s):
+    if s[1] == "CNSS":
+        return "Région"
+    lists = ("essp", "hopitaux", "juillet", "maisons", "multi")
+    return "Établissement, regroupé par province" if any(k in s[0] for k in lists) else "Province"
+with open(OUT / "data_sources_registry.csv", "w", encoding="utf-8-sig", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["source_id", "dataset_name", "producer", "original_url", "reference_year", "geographic_level", "licence", "commercial_use", "redistribution", "attribution", "verification_status"])
+    for n, s in enumerate(SOURCES, 1):
+        year = next((y for k, y in YEARS.items() if k in s[0]), "Non indiquée")
+        if s[4] == A_CONFIRMER:
+            rights = ("À vérifier", "À vérifier", "À vérifier", "À vérifier auprès du producteur")
+        else:
+            rights = ("Permis sous conditions ODbL", "Permise sous conditions ODbL (partage à l'identique)", "Oui", "Licence relevée, conditions non revues par un juriste")
+        w.writerow([f"S{n:02d}", s[2], s[1], s[3], year, levels(s), s[4], *rights])
 with open(OUT / "rafah_metadonnees.csv", encoding="utf-8-sig") as f:
     meta = list(csv.DictReader(f))
 assert {m["id"] for m in meta} == set(INDICATEURS)

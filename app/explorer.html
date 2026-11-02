@@ -173,7 +173,7 @@ td.n, th.n { text-align: right; white-space: nowrap }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
 </style>
 
-<header class="site-head"><div class="in"><a class="brand" href="index.html"><b>Rafah 2.0<span lang="ar" dir="rtl">رفاه</span></b><small>Observatoire indépendant du bien-être territorial</small></a><nav class="site-nav" aria-label="Menu principal"><a href="index.html">Accueil</a><a href="comprendre.html">Comprendre Rafah</a><a href="explorer.html" aria-current="page">Explorer</a><a href="indicateurs.html">Indicateurs</a><a href="analyses.html">Analyses</a><a href="explorer.html#simulateur">Simulateur</a><a href="intelligence.html">Intelligence</a><a href="pro.html">Pro</a><a href="methodologie.html">Méthodologie</a><a href="donnees.html">Données</a><a href="apropos.html">À propos</a></nav></div></header><div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div>
+<header class="site-head"><div class="in"><a class="brand" href="index.html"><b>Rafah 2.0<span lang="ar" dir="rtl">رفاه</span></b><small>Observatoire indépendant du bien-être territorial</small></a><nav class="site-nav" aria-label="Menu principal"><a href="index.html">Accueil</a><a href="comprendre.html">Comprendre Rafah</a><a href="explorer.html" aria-current="page">Explorer</a><a href="indicateurs.html">Indicateurs</a><a href="analyses.html">Analyses</a><a href="explorer.html#simulateur">Simulateur</a><a href="intelligence.html">Intelligence</a><a href="pro.html">Pro</a><a href="methodologie.html">Méthodologie</a><a href="donnees.html">Données</a><a href="publications.html">Publications</a><a href="apropos.html">À propos</a></nav></div></header><div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div>
 <div class="wrap">
   <div class="ex-title"><h1>Explorer les territoires</h1>
     <p>Carte, fiche et simulateur des 75 provinces et préfectures. 75 territoires couverts, 18 indicateurs publics, échelle de 1 à 100. Données de 2023 à 2024 pour le score, extraites le 2 novembre 2026.</p></div>
@@ -441,6 +441,17 @@ function markSvg(k, x, y, r = 5) {
   if (k === 1) return `<rect x="${x - r}" y="${y - r}" width="${2 * r}" height="${2 * r}" fill="${c}"/>`;
   return `<path d="M${x} ${y - r - 1}L${x + r + 1} ${y}L${x} ${y + r + 1}L${x - r - 1} ${y}Z" fill="${c}"/>`;
 }
+function compareSummary(ps) {
+  // Description des valeurs observées, sans interprétation causale.
+  const gaps = DIMS.map((d, k) => {
+    const s = [...ps].sort((a, b) => a.dims[k] - b.dims[k]), lo = s[0], hi = s[s.length - 1];
+    const inds = INDS.filter(i => i.dim === k).map(i => ({ i, gap: Math.abs(norm(hi.v[i.id], i) - norm(lo.v[i.id], i)) })).sort((a, b) => b.gap - a.gap);
+    return { d, k, lo, hi, gap: hi.dims[k] - lo.dims[k], ind: inds[0].i };
+  }).sort((a, b) => b.gap - a.gap);
+  const near = gaps[gaps.length - 1];
+  return `<h3>Principaux écarts</h3><ul style="margin-top:0">${gaps.slice(0, 3).map(g => `<li><b>${g.d}</b> : ${fmt(g.gap)} points entre ${g.hi.nom} (${fmt(g.hi.dims[g.k])}) et ${g.lo.nom} (${fmt(g.lo.dims[g.k])}). Indicateur le plus différent : ${g.ind.label.toLowerCase()}, ${fmt(g.hi.v[g.ind.id])} contre ${fmt(g.lo.v[g.ind.id])} ${g.ind.unit.replace(/\.$/, "")}.</li>`).join("")}</ul>
+    <p class="note">Dimension la plus proche : ${near.d} (${fmt(near.gap)} points d'écart). Ce résumé décrit les valeurs et n'en explique pas les causes.</p>`;
+}
 function renderCompare() {
   const ps = CMP.codes.map(c => byCode.get(c));
   const box = document.getElementById("cmp").clientWidth, narrow = box > 0 && box < 560;
@@ -457,7 +468,7 @@ function renderCompare() {
     <div class="scroll"><table><tr><th></th>${ps.map(p => `<th class="n">${p.nom}</th>`).join("")}</tr>
       ${tr("Indice Rafah", p => "<b>" + fmt(p.score) + "</b>")}${tr("Rang sur 75", p => p.rank)}${tr("Rang selon les poids", p => p.rangP05 + " à " + p.rangP95)}
       ${tr("Fiabilité", p => `<span class="pill ${p.fiab}">${p.fiab}</span>`)}${tr("Pauvreté HCP 2024", p => fmt(p.mpi24) + " %")}${tr("Population", p => fmt(p.population, 0))}
-    </table></div></div>`;
+    </table></div></div>${compareSummary(ps)}`;
 }
 function renderSheet() {
   const p = byCode.get(state.code);

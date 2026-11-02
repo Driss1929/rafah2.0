@@ -35,6 +35,18 @@ const mean = PROV.reduce((a, p) => a + p.score, 0) / PROV.length;
 const median = id => { const s = PROV.map(p => p.v[id]).sort((a, b) => a - b); return s[37]; };
 const nearest = p => [...PROV].filter(o => o !== p).sort((a, b) => dist(p, a) - dist(p, b)).slice(0, 2);
 const dist = (a, b) => a.dims.reduce((s, d, k) => s + (d - b.dims[k]) ** 2, 0);
+function regionRank(p) {
+  const peers = PROV.filter(o => o.region === p.region).sort((a, b) => b.score - a.score);
+  const avg = peers.reduce((a, o) => a + o.score, 0) / peers.length;
+  return `${peers.indexOf(p) + 1}e sur ${peers.length}, pour une moyenne régionale non pondérée de ${fmt(avg)}`;
+}
+function saveChart() {
+  // Les couleurs du thème sont écrites en dur pour que le fichier reste lisible hors du site.
+  const style = getComputedStyle(document.documentElement);
+  const svg = document.querySelector("#report svg").outerHTML.replace(/var\((--[\w-]+)\)/g, (_, v) => style.getPropertyValue(v).trim()).replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" })); a.download = `rafah_${pick.value}_dimensions.svg`; document.body.append(a); a.click(); a.remove();
+}
+document.getElementById("report").addEventListener("click", e => { if (e.target.id === "save-chart") saveChart(); });
 function dimChart(p) {
   const W = 680, L0 = 200, R0 = 20, H = 28 + 30 * 6, X = v => L0 + (v - 1) / 99 * (W - L0 - R0);
   const rows = DIMS.map((d, k) => { const y = 32 + k * 30; return `<text x="0" y="${y + 4}" font-size="13" fill="var(--fg)">${d}</text><line x1="${X(1)}" x2="${X(p.dims[k])}" y1="${y}" y2="${y}" stroke="var(--accent)" stroke-width="8"/><line x1="${X(dimMean[k])}" x2="${X(dimMean[k])}" y1="${y - 9}" y2="${y + 9}" stroke="var(--gold)" stroke-width="3"/><text x="${X(p.dims[k]) + 6}" y="${y - 7}" font-size="11" fill="var(--muted)">${fmt(p.dims[k])}</text>`; }).join("");
@@ -52,9 +64,10 @@ function render(p) {
     <h3>1. Le territoire</h3>
     <p>${p.type} de la région ${p.region}, ${fmt(p.population, 0)} habitants en 2024 (population municipale du RGPH).</p>
     <h3>2. Position nationale</h3>
-    <p>Score Rafah de <b>${fmt(p.score)}</b>, rang <b>${p.rank} sur 75</b>, pour une moyenne des provinces de ${fmt(mean)}. Selon les pondérations testées, son rang va de ${p.rangP05} à ${p.rangP95}. Valeurs publiées ou calculées : ${p.couverture} sur 18. Fiabilité : ${p.fiab}${p.fiabRaisons.length ? " (" + p.fiabRaisons.join(" ; ") + ")" : ""}.</p>
+    <p>Score Rafah de <b>${fmt(p.score)}</b>, rang <b>${p.rank} sur 75</b>, pour une moyenne des provinces de ${fmt(mean)}. Dans sa région, il se place ${regionRank(p)}. Selon les pondérations testées, son rang va de ${p.rangP05} à ${p.rangP95}. Valeurs publiées ou calculées : ${p.couverture} sur 18. Fiabilité : ${p.fiab}${p.fiabRaisons.length ? " (" + p.fiabRaisons.join(" ; ") + ")" : ""}.</p>
     <h3>3. Les six dimensions</h3>
     ${dimChart(p)}
+    <p class="no-print"><button class="chip" id="save-chart" type="button">Télécharger ce graphique (SVG)</button></p>
     <p>Dimension la plus élevée : ${DIMS[strong]} (${fmt(p.dims[strong])}). Dimension la plus faible : ${DIMS[weak]} (${fmt(p.dims[weak])}). Ce repère dépend en partie des bornes de normalisation.</p>
     <h3>4. Territoires au profil proche</h3>
     <p>Les deux territoires dont les six scores ressemblent le plus à ceux de ${p.nom}, quelle que soit leur région.</p>
@@ -71,15 +84,18 @@ function render(p) {
     <p>Ces questions découlent des écarts ci-dessus. Ce ne sont ni des recommandations ni des impacts démontrés.</p>
     <ul>${low.slice(0, 3).map(g => `<li>Qu'est-ce qui explique l'écart sur « ${g.i.label.toLowerCase()} » (${fmt(p.v[g.i.id])} ${g.i.unit} contre une médiane de ${fmt(g.m)} ${g.i.unit}) ? Cet écart se retrouve-t-il dans toutes les communes ?</li>`).join("")}
       <li>Les programmes déjà engagés sur le territoire sont-ils reflétés dans ces données ? Il faudrait le vérifier auprès des acteurs locaux.</li></ul>
-    <h3>8. Sources et limites</h3>
+    <h3>8. Les 18 indicateurs</h3>
+    <div class="scroll"><table><tr><th>Indicateur</th><th>Dimension</th><th class="n">Valeur</th><th class="n">Score</th><th>Statut</th><th>Source</th></tr>${INDS.map(i => `<tr><td>${i.label}</td><td>${DIMS[i.dim]}</td><td class="n">${fmt(p.v[i.id])} ${i.unit}</td><td class="n">${fmt(norm(p.v[i.id], i), 0)}</td><td>${p.status[i.id]}</td><td>${i.source}</td></tr>`).join("")}</table></div>
+    <h3>9. Sources et limites</h3>
     <p class="fine">Sources : RGPH 2024 et cartographie des établissements 2023/2024 (HCP), carte sanitaire 2024 (ministère de la Santé), data.gov.ma. L'offre de soins est comptée sur son lieu d'implantation. Un classement ne mesure ni la gestion d'un territoire ni le bien-être vécu. Détails sur les pages <a href="methodologie.html">Méthodologie</a> et <a href="donnees.html">Données</a>.</p>`;
 }
 const pick = document.getElementById("pick");
 pick.innerHTML = [...PROV].sort((a, b) => a.nom.localeCompare(b.nom, "fr")).map(p => `<option value="${p.code}">${p.nom}</option>`).join("");
-pick.value = 2251;
+const wanted = location.hash.match(/^#t(\d+)$/);
+pick.value = wanted && PROV.some(p => p.code === +wanted[1]) ? wanted[1] : 2251;
 pick.onchange = () => render(PROV.find(p => p.code === +pick.value));
 document.getElementById("print").onclick = () => window.print();
-render(PROV.find(p => p.code === 2251));
+render(PROV.find(p => p.code === +pick.value));
 const hm = { key: "score", dir: -1 };
 const hmClass = s => s < 25 ? 0 : s < 40 ? 1 : s < 55 ? 2 : s < 70 ? 3 : 4;
 const hmRegion = document.getElementById("hm-region");

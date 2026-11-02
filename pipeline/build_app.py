@@ -15,7 +15,7 @@ CSS = (SITE / "site.css").read_text(encoding="utf-8")
 FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap">'
 HEAD = '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="claude:viewport-fit-sides" content="cover">\n'
 NAV = [("index", "Accueil"), ("comprendre", "Comprendre Rafah"), ("explorer", "Explorer"), ("indicateurs", "Indicateurs"), ("analyses", "Analyses"),
-       ("explorer.html#simulateur", "Simulateur"), ("intelligence", "Intelligence"), ("pro", "Pro"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("apropos", "À propos")]
+       ("explorer.html#simulateur", "Simulateur"), ("intelligence", "Intelligence"), ("pro", "Pro"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("publications", "Publications"), ("apropos", "À propos")]
 DIM_TEXT = ["Médecins, centres de soins primaires et lits d'hôpital.", "Analphabétisme, scolarisation et niveau d'études.", "Chômage, emploi salarié et établissements économiques.",
             "Assainissement, électricité et logements sommaires.", "Eau courante, combustible de cuisson et collecte des déchets.", "Égalité femmes-hommes, activité des femmes et enclavement."]
 DIM_IMG = [("dimension-sante", "Illustration d'un centre de santé et de son personnel"), ("dimension-education", "Illustration d'une salle de classe"), ("dimension-emploi", "Illustration d'une rue commerçante"),
@@ -87,6 +87,31 @@ def robust():
     return head + "".join(f'<tr><td>{html.escape(r["scenario"])}</td><td class="n">{fr(r["spearman"], 2)}</td><td class="n">{fr(r["ecart_rang_moyen"])}</td><td class="n">{r["bas15_conserves"]} sur 15</td></tr>' for r in DATA["robustness"])
 
 
+def region_profiles():
+    def dims(p):
+        out = []
+        for k in range(6):
+            s = []
+            for i in [x for x in DATA["indicators"] if x["dim"] == k]:
+                r = (p["v"][i["id"]] - i["L"]) if i["sens"] > 0 else (i["U"] - p["v"][i["id"]])
+                s.append(min(100, max(1, 1 + 99 * r / (i["U"] - i["L"]))))
+            out.append(sum(s) / 3)
+        return out
+    order = sorted({p["region"] for p in DATA["provinces"]}, key=lambda r: -sum(SCORES[p["code"]] * p["population"] for p in DATA["provinces"] if p["region"] == r) / sum(p["population"] for p in DATA["provinces"] if p["region"] == r))
+    names = DATA["dimensions"]
+    out = []
+    for r in order:
+        ps = sorted([p for p in DATA["provinces"] if p["region"] == r], key=lambda p: -SCORES[p["code"]])
+        pop = sum(p["population"] for p in ps)
+        mean = sum(SCORES[p["code"]] * p["population"] for p in ps) / pop
+        dm = [sum(dims(p)[k] * p["population"] for p in ps) / pop for k in range(6)]
+        weak, strong = names[dm.index(min(dm))], names[dm.index(max(dm))]
+        rows = "".join(f'<tr><td><a href="intelligence.html#t{p["code"]}">{p["nom"]}</a></td><td class="n">{fr(SCORES[p["code"]])}</td>' + "".join(f'<td class="n">{fr(d)}</td>' for d in dims(p)) + f'<td>{p["fiab"]}</td></tr>' for p in ps)
+        head = "<tr><th>Territoire</th><th class=\"n\">Rafah</th>" + "".join(f'<th class="n">{n}</th>' for n in names) + "<th>Fiabilité</th></tr>"
+        out.append(f'<details class="card" style="margin-bottom:8px"><summary><b>{r}</b> : {fr(mean)}, {len(ps)} territoires, {fr(pop, 0)} habitants</summary><p>Écart interne : de {fr(SCORES[ps[-1]["code"]])} à {ps[-1]["nom"]} à {fr(SCORES[ps[0]["code"]])} à {ps[0]["nom"]}. Dimension moyenne la plus élevée : {strong}. La plus faible : {weak}.</p><div class="scroll"><table>{head}{rows}</table></div></details>')
+    return "".join(out)
+
+
 def pro_table():
     """Lignes de la maquette Pro : vraies valeurs de territoires pris en exemple."""
     def spark(vals):
@@ -134,7 +159,7 @@ def fill(text):
               "sb": fr(SCORES[sb["code"]]), "fi": fr(SCORES[fi["code"]]), "sb_mpi": fr(sb["mpi24"]), "fi_mpi": fr(fi["mpi24"]), "sb_eau": fr(sb["v"]["eau"]), "sb_dechets": fr(sb["v"]["dechets"]),
               "sp": fr(val["spearman"], 2), "sp2": fr(val["spearman_sans_chevauchement"], 2), "chom_portail": fr(val["chomage_portail_pauvrete"], 2), "chom_rgph": fr(val["chomage_rgph_pauvrete"], 2),
               "dim_cards": "".join(f'<div class="card dim-card"><img src="images/{DIM_IMG[k][0]}.svg" alt="{DIM_IMG[k][1]}" width="640" height="400" loading="lazy"><h3>{k + 1:02d}. {d}</h3><p>{DIM_TEXT[k]}</p></div>' for k, d in enumerate(DATA["dimensions"]))}
-    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block), ("pro_table", pro_table)]:
+    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block), ("pro_table", pro_table), ("region_profiles", region_profiles)]:
         if "{{" + key + "}}" in text:
             values[key] = fn()
     if "{{data_json}}" in text:
@@ -157,7 +182,7 @@ def main():
     shutil.copytree(SITE / "images", APP / "images", dirs_exist_ok=True)
     dl = APP / "donnees"
     dl.mkdir(exist_ok=True)
-    for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes", "provenance_sources", "provenance_indicateurs"]:
+    for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes", "provenance_sources", "provenance_indicateurs", "data_sources_registry"]:
         shutil.copy(OUT / f"{f}.csv", dl / f"{f}.csv")
     sizes = {p.name: p.stat().st_size // 1024 for p in sorted(APP.glob("*.html"))}
     print("Pages (Ko) :", sizes)

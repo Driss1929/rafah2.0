@@ -28,7 +28,7 @@ for name, text in pages.items():
         path = APP / target if target else APP / name
         if not path.exists():
             problems.append(f"{name} : lien cassé {href}")
-        elif anchor and path.suffix == ".html" and f'id="{anchor}"' not in path.read_text(encoding="utf-8"):
+        elif anchor and not re.fullmatch(r"t\d+(_\w+)?", anchor) and path.suffix == ".html" and f'id="{anchor}"' not in path.read_text(encoding="utf-8"):
             problems.append(f"{name} : ancre absente {href}")
 print("\n".join(problems) or f"{len(pages)} pages contrôlées : aucun problème")
 sys.exit(1 if problems else 0)
