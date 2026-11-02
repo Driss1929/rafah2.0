@@ -1,0 +1,49 @@
+<!-- title: Données et ressources -->
+<section>
+  <div class="eyebrow">Transparence</div>
+  <h1>Données et ressources</h1>
+  <p class="lead">Les résultats de Rafah, les sources utilisées et les contrôles réalisés.</p>
+</section>
+<section>
+  <h2>Résultats à télécharger</h2>
+  <div class="scroll"><table>
+    <tr><th>Fichier</th><th>Contenu</th></tr>
+    <tr><td><a href="donnees/rafah_provinces.csv">rafah_provinces.csv</a></td><td>Scores, rangs, dimensions et valeurs par territoire</td></tr>
+    <tr><td><a href="donnees/rafah_scores_indicateurs.csv">rafah_scores_indicateurs.csv</a></td><td>Score normalisé des 18 indicateurs</td></tr>
+    <tr><td><a href="donnees/rafah_metadonnees.csv">rafah_metadonnees.csv</a></td><td>Bornes, sens et sources des indicateurs</td></tr>
+    <tr><td><a href="donnees/rafah_contexte.csv">rafah_contexte.csv</a></td><td>Données complémentaires hors score</td></tr>
+    <tr><td><a href="donnees/rafah_fiabilite.csv">rafah_fiabilite.csv</a></td><td>Niveau de fiabilité et raisons</td></tr>
+    <tr><td><a href="donnees/audit_territoires.csv">audit_territoires.csv</a></td><td>Contrôle des 75 territoires</td></tr>
+    <tr><td><a href="donnees/sources_empreintes.csv">sources_empreintes.csv</a></td><td>Empreinte SHA-256 des fichiers sources</td></tr>
+  </table></div>
+  <p>Le code de calcul est sur <a href="https://github.com/Driss1929/rafah2.0">GitHub</a>. Les fichiers sources ne sont pas redistribués : suivez les liens ci-dessous.</p>
+</section>
+<section>
+  <h2>Sources</h2>
+  <div class="scroll"><table>
+    <tr><th>Producteur</th><th>Données</th><th>Année</th><th>Usage</th></tr>
+    <tr><td><a href="https://www.hcp.ma/file/242671/">HCP, RGPH</a></td><td>Éducation, emploi, logement, eau, inclusion, population</td><td>2024</td><td>Score</td></tr>
+    <tr><td><a href="https://www.hcp.ma/file/242672/">HCP, établissements économiques</a></td><td>Nombre d'établissements</td><td>2023/2024</td><td>Score</td></tr>
+    <tr><td><a href="https://www.hcp.ma/file/245096/">HCP, pauvreté multidimensionnelle</a></td><td>Taux 2014 et 2024</td><td>2014, 2024</td><td>Validation</td></tr>
+    <tr><td><a href="https://cartesanitaire.sante.gov.ma/dashboard/pages2/indicateur_2025.html">Ministère de la Santé, carte sanitaire</a></td><td>Médecins et lits</td><td>2024</td><td>Score</td></tr>
+    <tr><td><a href="https://data.gov.ma/data/fr/dataset/la-liste-des-hopitaux">data.gov.ma, soins primaires</a></td><td>Centres de soins, hôpitaux</td><td>2024, 2025</td><td>Score et contexte</td></tr>
+    <tr><td><a href="https://data.gov.ma/data/fr/dataset/data_imt_txch_02">data.gov.ma, emploi par province</a></td><td>Chômage, activité, emploi</td><td>2017-2025</td><td>Contexte</td></tr>
+    <tr><td><a href="https://data.gov.ma/data/fr/dataset/liste-des-etablissements-publics-primaire">data.gov.ma, établissements scolaires</a></td><td>Écoles, collèges, lycées publics</td><td>2023, 2026</td><td>Contexte</td></tr>
+    <tr><td><a href="https://data.gov.ma/data/fr/dataset/nombre-des-salaries-declares-en-2022-aupres-de-la-cnss">data.gov.ma, CNSS</a></td><td>Salariés et entreprises, par région</td><td>2022</td><td>Contexte</td></tr>
+    <tr><td><a href="https://data.gov.ma/data/fr/dataset/reseau-des-maisons-de-jeunes-rurales-et-urbaines-par-region-et-par-province">data.gov.ma, structures sociales</a></td><td>Maisons de jeunes, centres pour femmes et handicap, protection de l'enfance</td><td>Selon la liste</td><td>Contexte</td></tr>
+    <tr><td><a href="https://www.geoboundaries.org/api/current/gbOpen/MAR/ADM2/">geoBoundaries (OpenStreetMap)</a></td><td>Contours des provinces</td><td>2017</td><td>Carte</td></tr>
+  </table></div>
+</section>
+<section>
+  <h2>Audit des territoires</h2>
+  <p>Les 75 territoires ont été comparés aux monographies régionales du <a href="https://collectivites-territoriales.gov.ma/fr/node/739">portail des collectivités territoriales</a> : nom, région et statut de province ou de préfecture. Tous correspondent, sans manque ni doublon. 11 noms s'écrivent différemment, comme Mohammadia et Mohammedia ; Rafah conserve l'orthographe du RGPH 2024.</p>
+  <p>Ces monographies datent de 2015. Le fichier du RGPH 2024 confirme le même découpage, mais une évolution juridique plus récente n'a pas été recherchée dans les textes officiels. Casablanca compte pour une seule préfecture : ses préfectures d'arrondissements n'en sont pas des unités séparées.</p>
+</section>
+<section>
+  <h2>Conditions de réutilisation</h2>
+  <p>Les données de geoBoundaries et les jeux de data.gov.ma contrôlés sont sous licence ODbL, avec obligation d'attribution et de partage à l'identique. Les conditions de réutilisation des données du HCP et de la carte sanitaire restent à confirmer. Tout producteur peut demander une correction ou un retrait.</p>
+</section>
+<section>
+  <h2>Versions</h2>
+  <p>Version 2.0, novembre 2026 : calcul sur 75 territoires, fiabilité et audit des territoires. L'historique complet est sur <a href="https://github.com/Driss1929/rafah2.0/commits/main">GitHub</a>.</p>
+</section>

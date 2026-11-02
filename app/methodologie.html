@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Méthodologie de Rafah</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap"><style>/* Portail éditorial : bandeau bleu profond, or réservé aux accents, grands titres sobres. */
+:root {
+  --bg: #f4f6f9; --panel: #ffffff; --fg: #14213a; --muted: #566175; --line: #d7deE8;
+  --accent: #123a6b; --accent-soft: #e2e9f3; --gold: #a97c1f; --warn: #a33b12; --band: #0f2d55; --band-fg: #f4f6f9; --land-line: #ffffff;
+  --c1: #b5431d; --c2: #e59a58; --c3: #e6d79c; --c4: #68b3a4; --c5: #0f6b76;
+  --display: "IBM Plex Sans", "Segoe UI", sans-serif; --body: "IBM Plex Sans", "Segoe UI", sans-serif; --arabic: "Reem Kufi", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1626; --panel: #15213a; --fg: #e8edf5; --muted: #a2aec2; --line: #2c3a55;
+  --accent: #8db4e8; --accent-soft: #1f3050; --gold: #d9b45f; --warn: #f0a07a; --band: #0a1a33; --land-line: #0d1626; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d1626; --panel: #15213a; --fg: #e8edf5; --muted: #a2aec2; --line: #2c3a55;
+  --accent: #8db4e8; --accent-soft: #1f3050; --gold: #d9b45f; --warn: #f0a07a; --band: #0a1a33; --land-line: #0d1626; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); font-variant-numeric: tabular-nums }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+a { color: var(--accent) }
+.site-head { background: var(--band); color: var(--band-fg); padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)) }
+.site-head .in { max-width: 1480px; margin: 0 auto; padding-block: 10px; display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center }
+.brand { color: inherit; text-decoration: none; display: flex; flex-direction: column; line-height: 1.2 }
+.brand b { font-size: 1.15rem } .brand b span { font: 500 1.05rem var(--arabic); color: #e2c37a; margin-left: 6px }
+.brand small { font-size: .72rem; letter-spacing: .03em; opacity: .85 }
+.site-nav { display: flex; flex-wrap: wrap; gap: 2px 4px; flex: 1 1 320px; justify-content: flex-end; min-width: 0 }
+.site-nav a { color: inherit; text-decoration: none; font-size: .88rem; padding: 4px 8px; border-bottom: 2px solid transparent }
+.site-nav a:hover { border-color: #e2c37a }
+.site-nav a[aria-current=page] { border-color: #e2c37a; font-weight: 600 }
+.notice { background: var(--accent-soft); color: var(--fg); font-size: .82rem; padding: 5px max(16px, env(safe-area-inset-right, 0px)) 5px max(16px, env(safe-area-inset-left, 0px)); text-align: center }
+main.page { max-width: 1120px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 34px }
+main.page > * { min-width: 0 }
+main.page h1 { font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1.12; margin: 0 0 12px; text-wrap: balance; font-weight: 700 }
+main.page h2 { font-size: 1.45rem; margin: 0 0 10px; text-wrap: balance }
+main.page h3 { font-size: 1.05rem; margin: 14px 0 5px }
+main.page p, main.page li { max-width: 72ch }
+.lead { font-size: 1.12rem; color: var(--muted) }
+.eyebrow { color: var(--gold); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px }
+.hero { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 4fr); gap: 28px; align-items: center }
+.hero svg { width: 100%; height: auto; max-height: 460px }
+.hero path { stroke: var(--land-line); stroke-width: .35 }
+.btn { display: inline-block; background: var(--accent); color: var(--panel); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 4px 8px 4px 0 }
+.btn.alt { background: none; color: var(--accent); border: 1px solid var(--accent) }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; border-block: 1px solid var(--line); padding-block: 14px }
+.figs b { display: block; font-size: 2.2rem; line-height: 1.1; color: var(--accent) }
+.figs span { color: var(--muted); font-size: .9rem }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px 24px }
+.cols > div { min-width: 0 }
+.cols h3 { margin-top: 0 }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 14px 16px }
+.scroll { overflow-x: auto }
+.page table { border-collapse: collapse; width: 100%; font-size: .88rem; background: var(--panel) }
+.page th, .page td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top }
+.page th { font-size: .8rem; color: var(--muted) }
+td.n, th.n { text-align: right; white-space: nowrap }
+.ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px }
+.ctl label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block }
+.page select, .page input[type=search] { width: 100%; padding: 7px 9px; font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 4px }
+.page button.chip { font: inherit; font-size: .88rem; padding: 7px 12px; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 4px; cursor: pointer }
+th button { all: unset; cursor: pointer; font-weight: 600 } th button:hover { color: var(--accent) }
+.formula { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; font-size: .95rem; overflow-x: auto }
+.site-foot { background: var(--band); color: var(--band-fg); font-size: .86rem; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 22px max(16px, env(safe-area-inset-left, 0px)) }
+.site-foot .in { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 26px; justify-content: space-between }
+.site-foot a { color: inherit } .site-foot p { margin: 0; max-width: 62ch }
+@media (max-width: 800px) { .hero { grid-template-columns: minmax(0, 1fr) } .site-nav { justify-content: flex-start } }
+</style></head><body><header class="site-head"><div class="in"><a class="brand" href="index.html"><b>Rafah 2.0<span lang="ar" dir="rtl">رفاه</span></b><small>Observatoire indépendant du bien-être territorial</small></a><nav class="site-nav" aria-label="Menu principal"><a href="index.html">Accueil</a><a href="comprendre.html">Comprendre Rafah</a><a href="explorer.html">Explorer</a><a href="indicateurs.html">Indicateurs</a><a href="analyses.html">Analyses</a><a href="explorer.html#simulateur">Simulateur</a><a href="methodologie.html" aria-current="page">Méthodologie</a><a href="donnees.html">Données</a><a href="apropos.html">À propos</a></nav></div></header><div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div><main class="page">
+<section>
+  <div class="eyebrow">Construction et validation</div>
+  <h1>Méthodologie</h1>
+  <p class="lead">L'indice suit les lignes directrices OCDE-JRC pour les indicateurs composites. Chaque étape est reproductible à partir du code public.</p>
+</section>
+<section>
+  <h2>Du chiffre brut à l'indice</h2>
+  <h3>1. Normalisation à bornes fixes</h3>
+  <p>Chaque indicateur est ramené entre 1 et 100. La borne vient d'une cible ODD quand elle existe, sinon des centiles 5 et 95 observés en 2024. Comme les bornes sont fixes, une simulation dans une province ne change pas le score des autres.</p>
+  <div class="formula">Sens + : score = 1 + 99 × (x − L) / (U − L) &nbsp;·&nbsp; Sens − : score = 1 + 99 × (U − x) / (U − L)</div>
+  <h3>2. Score de dimension</h3>
+  <p>Moyenne arithmétique des trois indicateurs de la dimension.</p>
+  <h3>3. Indice Rafah</h3>
+  <p>Moyenne géométrique des six dimensions à poids égaux, pour qu'un point fort ne compense pas entièrement un point faible.</p>
+  <div class="formula">Rafah = (D1 × D2 × D3 × D4 × D5 × D6)<sup>1/6</sup></div>
+</section>
+<section>
+  <h2>Hiérarchie des sources</h2>
+  <p>data.gov.ma est utilisé en priorité quand il publie une mesure par province qui résiste aux tests. Sinon, Rafah s'appuie sur le HCP, puis sur le ministère de la Santé. Le portail ne publie pas par province l'eau, l'assainissement, l'électricité, l'analphabétisme ni la population.</p>
+  <p>Le chômage de l'enquête emploi du portail reste hors score : il manque pour 4 provinces et sa corrélation de rang avec la pauvreté est de -0,44, contre 0,28 pour celui du recensement.</p>
+</section>
+<section id="ecarts">
+  <h2>Écarts avec la grille initiale</h2>
+  <div class="scroll"><table>
+    <tr><th>Prévu</th><th>Retenu</th><th>Raison</th></tr>
+    <tr><td>Salariés déclarés à la CNSS</td><td>Salariés public et privé pour 1 000 habitants (RGPH 2024)</td><td>La CNSS ne publie que par région. Le remplaçant compte aussi l'emploi salarié non déclaré.</td></tr>
+    <tr><td>Jeunes ni en emploi ni en études</td><td>Distance moyenne à la route goudronnée</td><td>Aucune donnée provinciale trouvée.</td></tr>
+    <tr><td>Scolarisation 6-11 et 12-14 ans</td><td>6-11 ans</td><td>Les 12-14 ans ne sont pas publiés dans le fichier du HCP.</td></tr>
+    <tr><td>25 ans et plus de niveau secondaire ou supérieur</td><td>Population de niveau secondaire ou supérieur</td><td>Niveau d'études non ventilé par âge.</td></tr>
+    <tr><td>Raccordement au réseau d'eau</td><td>Eau courante dans le logement</td><td>Seule variable publiée.</td></tr>
+    <tr><td>Raccordement à l'électricité</td><td>Électricité dans le logement</td><td>Seule variable publiée.</td></tr>
+  </table></div>
+</section>
+<section>
+  <h2>Valeurs manquantes et statut des données</h2>
+  <ul>
+    <li><b>Imputé :</b> les médecins d'Aousserd reprennent la valeur de leur région. C'est la seule valeur imputée.</li>
+    <li><b>Déduit :</b> 0 lit à Fahs-Anjra, Moulay Yacoub et Aousserd, où la liste du ministère ne recense aucun hôpital.</li>
+    <li><b>Convention :</b> enclavement compté 0 km à Rabat et à Casablanca, où le HCP l'indique sans objet.</li>
+    <li><b>Fiabilité :</b> Prudence si une valeur est imputée ou si la population est inférieure à 100 000 habitants ; Moyenne en cas de 0 déduit ou de fourchette de rang d'au moins 15 places ; Élevée sinon. Ces seuils sont des conventions du projet, pas une mesure statistique de l'erreur.</li>
+  </ul>
+</section>
+<section>
+  <h2>Validation externe</h2>
+  <p>La pauvreté multidimensionnelle du HCP n'entre pas dans le calcul. Sa corrélation de rang avec l'indice est de -0,91. Ce chiffre est en partie mécanique, car les deux mesures partagent des variables du recensement. Avec les seules dimensions Santé et Emploi, sans ce recoupement, elle est de -0,68.</p>
+</section>
+<section>
+  <h2>Robustesse</h2>
+  <div class="scroll"><table><tr><th>Variante</th><th class="n">Corrélation de rang</th><th class="n">Écart de rang moyen</th><th class="n">15 derniers conservés</th></tr><tr><td>Moyenne arithmétique au lieu de géométrique</td><td class="n">0,99</td><td class="n">2,4</td><td class="n">13 sur 15</td></tr><tr><td>Poids issus de l&#x27;ACP</td><td class="n">0,99</td><td class="n">2,3</td><td class="n">13 sur 15</td></tr><tr><td>Sans la dimension Santé</td><td class="n">0,97</td><td class="n">3,5</td><td class="n">13 sur 15</td></tr><tr><td>Sans la dimension Éducation</td><td class="n">0,99</td><td class="n">2,5</td><td class="n">13 sur 15</td></tr><tr><td>Sans la dimension Emploi et revenus</td><td class="n">0,98</td><td class="n">3,2</td><td class="n">12 sur 15</td></tr><tr><td>Sans la dimension Logement et services de base</td><td class="n">0,99</td><td class="n">2,0</td><td class="n">13 sur 15</td></tr><tr><td>Sans la dimension Eau et cadre de vie</td><td class="n">0,99</td><td class="n">1,8</td><td class="n">14 sur 15</td></tr><tr><td>Sans la dimension Inclusion sociale</td><td class="n">0,99</td><td class="n">2,3</td><td class="n">14 sur 15</td></tr><tr><td>CNSS 2022 régional au lieu des salariés provinciaux</td><td class="n">0,99</td><td class="n">1,5</td><td class="n">14 sur 15</td></tr><tr><td>Aousserd : 0 médecin au lieu de la valeur régionale</td><td class="n">1,00</td><td class="n">0,0</td><td class="n">15 sur 15</td></tr><tr><td>Chômage de l&#x27;enquête emploi (data.gov.ma) au lieu du RGPH</td><td class="n">0,99</td><td class="n">1,7</td><td class="n">13 sur 15</td></tr></table></div>
+</section>
+<section id="limites">
+  <h2>Limites et précautions de lecture</h2>
+  <ul>
+    <li>L'offre de soins est comptée là où elle se situe, pas là où les patients se soignent.</li>
+    <li>Les ratios sont instables dans les provinces peu peuplées.</li>
+    <li>La dimension la plus faible dépend en partie des bornes : elle signale une question à examiner, pas un verdict.</li>
+    <li>Les correspondances avec les ODD et les seuils de fiabilité sont des choix du projet, à valider par des pairs.</li>
+    <li>L'évolution de l'indice n'est pas calculée : les 18 indicateurs de 2014 n'ont pas encore été réunis.</li>
+    <li>Le simulateur et les pondérations produisent des calculs, pas des prévisions d'impact.</li>
+  </ul>
+</section>
+</main><footer class="site-foot"><div class="in"><p>Rafah 2.0. Mesurer, comprendre, agir. Prototype indépendant construit à partir de données publiques du HCP, du ministère de la Santé et de data.gov.ma.</p><p><a href="apropos.html">À propos</a> · <a href="methodologie.html">Méthodologie</a> · <a href="donnees.html">Sources</a> · <a href="https://github.com/Driss1929/rafah2.0">GitHub</a></p></div></footer></body></html>

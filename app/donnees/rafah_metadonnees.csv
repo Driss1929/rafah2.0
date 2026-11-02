@@ -1,0 +1,19 @@
+﻿id,dim,label,sens,lever,unit,source,cible,L,U,bornes
+medecins,0,Médecins (public + privé) pour 10 000 habitants,1,True,pour 10 000 hab.,"Ministère de la Santé, carte sanitaire (2024)",,1.866,17.849,centiles 5-95 (2024)
+essp,0,Établissements de soins primaires pour 10 000 habitants,1,True,pour 10 000 hab.,"Ministère de la Santé, data.gov.ma (2024)",,0.333,3.391,centiles 5-95 (2024)
+lits,0,Lits d'hôpital (public + privé) pour 10 000 habitants,1,True,pour 10 000 hab.,"Ministère de la Santé, carte sanitaire (2024)",,1.138,28.758,centiles 5-95 (2024)
+analphabetisme,1,Taux d'analphabétisme (10 ans et plus),-1,False,%,"HCP, RGPH 2024",ODD 4.6,0.0,39.23,ODD 4.6
+scolarisation,1,Taux de scolarisation des 6-11 ans,1,True,%,"HCP, RGPH 2024",ODD 4.1,94.01,100.0,ODD 4.1
+secondaire,1,Population de niveau secondaire ou supérieur,1,False,%,"HCP, RGPH 2024",,25.69,49.57,centiles 5-95 (2024)
+chomage,2,Taux de chômage,-1,False,%,"HCP, RGPH 2024",,15.44,35.4,centiles 5-95 (2024)
+salaries,2,Salariés (public + privé) pour 1 000 habitants,1,True,pour 1 000 hab.,"HCP, RGPH 2024",,89.546,225.817,centiles 5-95 (2024)
+etablissements,2,Établissements économiques pour 1 000 habitants,1,False,pour 1 000 hab.,"HCP, CEE 2023/2024",,16.88,45.031,centiles 5-95 (2024)
+assainissement,3,Ménages raccordés à l'assainissement,1,True,%,"HCP, RGPH 2024",ODD 6.2,20.02,100.0,ODD 6.2
+electricite,3,Ménages disposant de l'électricité,1,True,%,"HCP, RGPH 2024",ODD 7.1,93.99,100.0,ODD 7.1
+bidonville,3,Logements de type sommaire ou bidonville,-1,True,%,"HCP, RGPH 2024",ODD 11.1,0.0,10.93,ODD 11.1
+eau,4,Ménages disposant de l'eau courante,1,True,%,"HCP, RGPH 2024",ODD 6.1,37.5,100.0,ODD 6.1
+bois,4,Ménages cuisinant au bois ou au charbon,-1,False,%,"HCP, RGPH 2024",ODD 7.1,0.0,20.5,ODD 7.1
+dechets,4,Ménages dont les déchets sont collectés,1,True,%,"HCP, RGPH 2024",ODD 11.6,27.33,100.0,ODD 11.6
+ecart_alpha,5,Écart d'analphabétisme femmes-hommes,-1,False,points,"HCP, RGPH 2024",ODD 4.5,0.0,24.09,ODD 4.5
+activite_f,5,Taux d'activité des femmes,1,False,%,"HCP, RGPH 2024",,5.94,26.07,centiles 5-95 (2024)
+enclavement,5,Distance moyenne des logements à la route goudronnée,-1,False,km,"HCP, RGPH 2024",,0.47,3.52,centiles 5-95 (2024)

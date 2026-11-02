@@ -1,0 +1,62 @@
+<!-- title: Méthodologie de Rafah -->
+<section>
+  <div class="eyebrow">Construction et validation</div>
+  <h1>Méthodologie</h1>
+  <p class="lead">L'indice suit les lignes directrices OCDE-JRC pour les indicateurs composites. Chaque étape est reproductible à partir du code public.</p>
+</section>
+<section>
+  <h2>Du chiffre brut à l'indice</h2>
+  <h3>1. Normalisation à bornes fixes</h3>
+  <p>Chaque indicateur est ramené entre 1 et 100. La borne vient d'une cible ODD quand elle existe, sinon des centiles 5 et 95 observés en 2024. Comme les bornes sont fixes, une simulation dans une province ne change pas le score des autres.</p>
+  <div class="formula">Sens + : score = 1 + 99 × (x − L) / (U − L) &nbsp;·&nbsp; Sens − : score = 1 + 99 × (U − x) / (U − L)</div>
+  <h3>2. Score de dimension</h3>
+  <p>Moyenne arithmétique des trois indicateurs de la dimension.</p>
+  <h3>3. Indice Rafah</h3>
+  <p>Moyenne géométrique des six dimensions à poids égaux, pour qu'un point fort ne compense pas entièrement un point faible.</p>
+  <div class="formula">Rafah = (D1 × D2 × D3 × D4 × D5 × D6)<sup>1/6</sup></div>
+</section>
+<section>
+  <h2>Hiérarchie des sources</h2>
+  <p>data.gov.ma est utilisé en priorité quand il publie une mesure par province qui résiste aux tests. Sinon, Rafah s'appuie sur le HCP, puis sur le ministère de la Santé. Le portail ne publie pas par province l'eau, l'assainissement, l'électricité, l'analphabétisme ni la population.</p>
+  <p>Le chômage de l'enquête emploi du portail reste hors score : il manque pour 4 provinces et sa corrélation de rang avec la pauvreté est de {{chom_portail}}, contre {{chom_rgph}} pour celui du recensement.</p>
+</section>
+<section id="ecarts">
+  <h2>Écarts avec la grille initiale</h2>
+  <div class="scroll"><table>
+    <tr><th>Prévu</th><th>Retenu</th><th>Raison</th></tr>
+    <tr><td>Salariés déclarés à la CNSS</td><td>Salariés public et privé pour 1 000 habitants (RGPH 2024)</td><td>La CNSS ne publie que par région. Le remplaçant compte aussi l'emploi salarié non déclaré.</td></tr>
+    <tr><td>Jeunes ni en emploi ni en études</td><td>Distance moyenne à la route goudronnée</td><td>Aucune donnée provinciale trouvée.</td></tr>
+    <tr><td>Scolarisation 6-11 et 12-14 ans</td><td>6-11 ans</td><td>Les 12-14 ans ne sont pas publiés dans le fichier du HCP.</td></tr>
+    <tr><td>25 ans et plus de niveau secondaire ou supérieur</td><td>Population de niveau secondaire ou supérieur</td><td>Niveau d'études non ventilé par âge.</td></tr>
+    <tr><td>Raccordement au réseau d'eau</td><td>Eau courante dans le logement</td><td>Seule variable publiée.</td></tr>
+    <tr><td>Raccordement à l'électricité</td><td>Électricité dans le logement</td><td>Seule variable publiée.</td></tr>
+  </table></div>
+</section>
+<section>
+  <h2>Valeurs manquantes et statut des données</h2>
+  <ul>
+    <li><b>Imputé :</b> les médecins d'Aousserd reprennent la valeur de leur région. C'est la seule valeur imputée.</li>
+    <li><b>Déduit :</b> 0 lit à Fahs-Anjra, Moulay Yacoub et Aousserd, où la liste du ministère ne recense aucun hôpital.</li>
+    <li><b>Convention :</b> enclavement compté 0 km à Rabat et à Casablanca, où le HCP l'indique sans objet.</li>
+    <li><b>Fiabilité :</b> Prudence si une valeur est imputée ou si la population est inférieure à 100 000 habitants ; Moyenne en cas de 0 déduit ou de fourchette de rang d'au moins 15 places ; Élevée sinon. Ces seuils sont des conventions du projet, pas une mesure statistique de l'erreur.</li>
+  </ul>
+</section>
+<section>
+  <h2>Validation externe</h2>
+  <p>La pauvreté multidimensionnelle du HCP n'entre pas dans le calcul. Sa corrélation de rang avec l'indice est de {{sp}}. Ce chiffre est en partie mécanique, car les deux mesures partagent des variables du recensement. Avec les seules dimensions Santé et Emploi, sans ce recoupement, elle est de {{sp2}}.</p>
+</section>
+<section>
+  <h2>Robustesse</h2>
+  <div class="scroll"><table>{{robust}}</table></div>
+</section>
+<section id="limites">
+  <h2>Limites et précautions de lecture</h2>
+  <ul>
+    <li>L'offre de soins est comptée là où elle se situe, pas là où les patients se soignent.</li>
+    <li>Les ratios sont instables dans les provinces peu peuplées.</li>
+    <li>La dimension la plus faible dépend en partie des bornes : elle signale une question à examiner, pas un verdict.</li>
+    <li>Les correspondances avec les ODD et les seuils de fiabilité sont des choix du projet, à valider par des pairs.</li>
+    <li>L'évolution de l'indice n'est pas calculée : les 18 indicateurs de 2014 n'ont pas encore été réunis.</li>
+    <li>Le simulateur et les pondérations produisent des calculs, pas des prévisions d'impact.</li>
+  </ul>
+</section>

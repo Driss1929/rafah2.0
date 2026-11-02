@@ -1,0 +1,79 @@
+<!-- title: Analyses comparatives -->
+<section>
+  <div class="eyebrow">Comparer</div>
+  <h1>Analyses comparatives</h1>
+  <p class="lead">Classez les territoires, comparez les régions et mesurez les écarts. Ces classements sont des repères de lecture, avec une marge d'incertitude.</p>
+  <p>Pour comparer trois provinces côte à côte ou modifier les pondérations, ouvrez <a href="explorer.html#comparer">l'explorateur</a>.</p>
+</section>
+<section>
+  <h2>Écarts par dimension</h2>
+  <p>Chaque ligne va du score le plus faible au plus élevé parmi les 75 territoires. Le point marque la moyenne des provinces.</p>
+  <div id="gaps"></div>
+</section>
+<section>
+  <h2>Classement des territoires</h2>
+  <div class="ctl">
+    <div><label for="f-region">Région</label><select id="f-region"></select></div>
+    <div><label for="f-fiab">Fiabilité</label><select id="f-fiab"><option value="">Toutes</option><option>Élevée</option><option>Moyenne</option><option>Prudence</option></select></div>
+    <div><label for="f-q">Province ou préfecture</label><input id="f-q" type="search" placeholder="Taza, Casablanca…"></div>
+    <div><label>&nbsp;</label><button class="chip" id="export" type="button">Exporter ce tableau (CSV)</button></div>
+  </div>
+  <p id="count" style="font-size:.88rem;margin:0 0 6px"></p>
+  <div class="scroll"><table id="rank"></table></div>
+</section>
+<section>
+  <h2>Comparaison des régions</h2>
+  <p>Score moyen des provinces de chaque région, pondéré par leur population. C'est un résumé de lecture, pas un indice calculé au niveau régional.</p>
+  <div class="scroll"><table id="regions"></table></div>
+</section>
+<script>
+const DATA = {{data_json}};
+const { dimensions: DIMS, indicators: INDS, provinces: PROV } = DATA;
+const fmt = (x, d = 1) => Number(x).toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d });
+const norm = (x, i) => Math.min(100, Math.max(1, 1 + 99 * (i.sens > 0 ? x - i.L : i.U - x) / (i.U - i.L)));
+for (const p of PROV) {
+  p.dims = DIMS.map((_, k) => { const s = INDS.filter(i => i.dim === k).map(i => norm(p.v[i.id], i)); return s.reduce((a, b) => a + b) / 3; });
+  p.score = Math.exp(p.dims.reduce((a, d) => a + Math.log(d), 0) / 6);
+}
+[...PROV].sort((a, b) => b.score - a.score).forEach((p, n) => p.rank = n + 1);
+const state = { key: "rank", dir: 1 };
+const COLS = [["rank", "Rang", p => p.rank], ["nom", "Territoire", p => p.nom], ["region", "Région", p => p.region], ["score", "Rafah", p => p.score, 1],
+  ...DIMS.map((d, k) => ["d" + k, d, p => p.dims[k], 1]), ["mpi24", "Pauvreté HCP 2024 (%)", p => p.mpi24, 1], ["fiab", "Fiabilité", p => p.fiab]];
+const clean = s => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+function rows() {
+  const r = document.getElementById("f-region").value, f = document.getElementById("f-fiab").value, q = clean(document.getElementById("f-q").value.trim());
+  const col = COLS.find(c => c[0] === state.key);
+  return PROV.filter(p => (!r || p.region === r) && (!f || p.fiab === f) && (!q || clean(p.nom).includes(q)))
+    .sort((a, b) => { const x = col[2](a), y = col[2](b); return state.dir * (typeof x === "string" ? x.localeCompare(y, "fr") : x - y); });
+}
+function render() {
+  const data = rows();
+  document.getElementById("count").textContent = `${data.length} territoire${data.length > 1 ? "s" : ""} sur 75`;
+  document.getElementById("rank").innerHTML = `<tr>${COLS.map(c => `<th class="${c[3] || c[0] === "rank" ? "n" : ""}"><button type="button" data-k="${c[0]}">${c[1]}${state.key === c[0] ? (state.dir > 0 ? " ↑" : " ↓") : ""}</button></th>`).join("")}</tr>` +
+    data.map(p => `<tr>${COLS.map(c => { const v = c[2](p); return `<td class="${c[3] || c[0] === "rank" ? "n" : ""}">${c[3] ? fmt(v) : v}</td>`; }).join("")}</tr>`).join("");
+}
+document.getElementById("rank").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (state.key === b.dataset.k) state.dir *= -1; else { state.key = b.dataset.k; state.dir = ["rank", "nom", "region", "fiab"].includes(b.dataset.k) ? 1 : -1; }
+  render();
+});
+const regions = [...new Set(PROV.map(p => p.region))];
+document.getElementById("f-region").innerHTML = `<option value="">Toutes</option>` + [...regions].sort((a, b) => a.localeCompare(b, "fr")).map(r => `<option>${r}</option>`).join("");
+for (const id of ["f-region", "f-fiab", "f-q"]) document.getElementById(id).addEventListener("input", render);
+document.getElementById("export").onclick = () => {
+  const q = s => `"${String(s).replace(/"/g, '""')}"`;
+  const csv = "﻿" + [COLS.map(c => q(c[1])).join(";"), ...rows().map(p => COLS.map(c => { const v = c[2](p); return c[3] ? fmt(v) : q(v); }).join(";"))].join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "rafah_classement.csv"; document.body.append(a); a.click(); a.remove();
+};
+const W = 760, L0 = 214, R0 = 44, H = 26 + DIMS.length * 34, X = v => L0 + (v - 1) / 99 * (W - L0 - R0);
+const lines = DIMS.map((d, k) => {
+  const v = PROV.map(p => p.dims[k]), lo = Math.min(...v), hi = Math.max(...v), m = v.reduce((a, b) => a + b) / v.length, y = 30 + k * 34;
+  return `<text x="0" y="${y + 4}" fill="var(--fg)" font-size="13">${d}</text><line x1="${X(lo)}" x2="${X(hi)}" y1="${y}" y2="${y}" stroke="var(--accent)" stroke-width="5" opacity=".35"/><circle cx="${X(m)}" cy="${y}" r="5" fill="var(--accent)"/><text x="${X(hi) + 6}" y="${y + 4}" fill="var(--muted)" font-size="12">${fmt(hi - lo, 0)} pts</text>`;
+}).join("");
+document.getElementById("gaps").innerHTML = `<div class="scroll"><svg viewBox="0 0 ${W} ${H}" style="min-width:560px;width:100%" role="img" aria-label="Écart entre le score le plus faible et le plus élevé pour chaque dimension">${[1, 25, 50, 75, 100].map(t => `<line x1="${X(t)}" x2="${X(t)}" y1="16" y2="${H}" stroke="var(--line)"/><text x="${X(t)}" y="12" text-anchor="middle" font-size="12" fill="var(--muted)">${t}</text>`).join("")}${lines}</svg></div>`;
+document.getElementById("regions").innerHTML = `<tr><th>Région</th><th class="n">Territoires</th><th class="n">Population</th><th class="n">Score moyen</th><th>Le plus faible</th><th>Le plus élevé</th></tr>` + regions.map(r => {
+  const ps = PROV.filter(p => p.region === r), pop = ps.reduce((a, p) => a + p.population, 0), m = ps.reduce((a, p) => a + p.score * p.population, 0) / pop, s = [...ps].sort((a, b) => a.score - b.score);
+  return { r, n: ps.length, pop, m, lo: s[0], hi: s[s.length - 1] };
+}).sort((a, b) => b.m - a.m).map(o => `<tr><td>${o.r}</td><td class="n">${o.n}</td><td class="n">${fmt(o.pop, 0)}</td><td class="n"><b>${fmt(o.m)}</b></td><td>${o.lo.nom} (${fmt(o.lo.score)})</td><td>${o.hi.nom} (${fmt(o.hi.score)})</td></tr>`).join("");
+render();
+</script>

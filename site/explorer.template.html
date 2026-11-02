@@ -1,30 +1,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rafah</title>
+<title>Explorer les territoires</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Reem+Kufi:wght@500&family=Source+Sans+3:wght@400;600;700&display=swap">
+__FONTS__
+<style>__SITECSS__</style>
 <style>
 /* Atlas de travail : liste des provinces, carte au centre, fiche et simulateur à droite. */
-:root {
-  --bg: #eef3f2; --panel: #fbfdfc; --fg: #14282a; --muted: #55686a; --line: #cbd8d6;
-  --accent: #0d6470; --accent-soft: #d9ebea; --land-line: #fbfdfc; --warn: #a33b12;
-  --c1: #b5431d; --c2: #e59a58; --c3: #e6d79c; --c4: #68b3a4; --c5: #0f6b76;
-  --display: "Alegreya", Georgia, serif; --body: "Source Sans 3", "Segoe UI", sans-serif; --arabic: "Reem Kufi", "Segoe UI", sans-serif;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0f1c1e; --panel: #162729; --fg: #e6f0ee; --muted: #9db1b0; --line: #2d4345;
-  --accent: #6cc4bc; --accent-soft: #1f3b3d; --land-line: #0f1c1e; --warn: #f0a07a; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #0f1c1e; --panel: #162729; --fg: #e6f0ee; --muted: #9db1b0; --line: #2d4345;
-  --accent: #6cc4bc; --accent-soft: #1f3b3d; --land-line: #0f1c1e; --warn: #f0a07a; color-scheme: dark }
-* { box-sizing: border-box }
-body { background: var(--bg); color: var(--fg); font: 16px/1.45 var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 18px 40px; font-variant-numeric: tabular-nums }
-.wrap { max-width: 1480px; margin: 0 auto; display: grid; gap: 16px }
-h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.15; text-wrap: balance }
-header { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline }
-h1 { font-size: 2.1rem; display: flex; gap: 12px; align-items: baseline }
-h1 span { font: 500 1.7rem var(--arabic); color: var(--accent) }
-header p { margin: 0; color: var(--muted); max-width: 72ch; flex: 1 1 340px; min-width: 0 }
+body { font-size: 16px; line-height: 1.45 }
+.wrap { max-width: 1480px; margin: 0 auto; display: grid; gap: 16px; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)) }
+.wrap h1, .wrap h2, .wrap h3 { font-family: var(--display); margin: 0; line-height: 1.15; text-wrap: balance }
+.ex-title { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline }
+.ex-title p { margin: 0; color: var(--muted); max-width: 72ch; flex: 1 1 340px; min-width: 0 }
+h1 { font-size: 1.8rem }
 .grid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 390px; gap: 14px; align-items: start }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; min-width: 0 }
 label, .lab { font-size: .8rem; color: var(--muted); font-weight: 600 }
@@ -101,14 +88,15 @@ td.n, th.n { text-align: right; white-space: nowrap }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
 </style>
 
+__NAV__
 <div class="wrap">
-  <header>
-    <h1>Rafah <span lang="ar" dir="rtl">رفاه</span></h1>
-    <p>Indice de bien-être des 75 provinces et préfectures du Maroc, sur une échelle de 1 à 100, calculé à partir de 18 indicateurs publics. Prototype de recherche indépendant, sans lien avec le HCP ni le ministère de la Santé.</p>
-  </header>
+  <div class="ex-title"><h1>Explorer les territoires</h1>
+    <p>Carte, fiche et simulateur des 75 provinces et préfectures. Chaque score vient de 18 indicateurs publics, sur une échelle de 1 à 100.</p></div>
 
   <div class="grid">
     <nav class="panel" aria-label="Classement des provinces">
+      <label for="reg">Région</label>
+      <select id="reg" style="margin-bottom:8px"></select>
       <label for="q">Chercher une province</label>
       <input id="q" type="search" placeholder="Taza, Casablanca…">
       <ul id="list"></ul>
@@ -130,7 +118,7 @@ td.n, th.n { text-align: right; white-space: nowrap }
     <aside class="panel" id="sheet" aria-live="polite"></aside>
   </div>
 
-  <section class="panel" aria-label="Comparaison">
+  <section class="panel" id="comparer" aria-label="Comparaison">
     <h2 style="font-size:1.35rem;margin-bottom:8px">Comparer trois provinces</h2>
     <div class="cmp-sel">
       <div><label for="cmp-0">Province 1</label><select id="cmp-0"></select></div>
@@ -142,7 +130,7 @@ td.n, th.n { text-align: right; white-space: nowrap }
 
   <div class="below">
     <section class="panel">
-      <h2>Modifier les pondérations</h2>
+      <h2 id="ponderations">Modifier les pondérations</h2>
       <p class="note">Par défaut, les six dimensions pèsent autant. Déplacez un curseur pour recalculer les scores et le classement de toutes les provinces.</p>
       <div class="weights" id="weights"></div>
       <button class="chip" id="w-reset" type="button" style="margin-top:10px">Revenir aux poids égaux</button>
@@ -176,6 +164,7 @@ td.n, th.n { text-align: right; white-space: nowrap }
   </div>
 </div>
 
+__FOOT__
 <script id="data" type="application/json">__DATA__</script>
 <script id="geo" type="application/json">__GEO__</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -317,11 +306,14 @@ function paint() {
 function renderList() {
   const q = document.getElementById("q").value.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
   document.getElementById("list").innerHTML = state.sorted
+    .filter(p => !state.region || p.region === state.region)
     .filter(p => !q || p.nom.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(q))
     .map(p => `<li><button type="button" data-c="${p.code}" aria-current="${p.code === state.code}"><span class="r">${p.rank}</span><span><i style="background:${CL[scoreClass(p.score)]}"></i>${p.nom}</span><span>${fmt(p.score)}</span></button></li>`).join("");
 }
 document.getElementById("list").addEventListener("click", e => { const b = e.target.closest("button"); if (b) select(+b.dataset.c, true); });
 document.getElementById("q").addEventListener("input", renderList);
+document.getElementById("reg").innerHTML = `<option value="">Toutes les régions</option>` + [...new Set(PROV.map(p => p.region))].sort((a, b) => a.localeCompare(b, "fr")).map(r => `<option>${r}</option>`).join("");
+document.getElementById("reg").onchange = e => { state.region = e.target.value; renderList(); };
 
 function simResult(p) {
   const ds = dimScores(simValues(p)), s = index(ds);
@@ -400,7 +392,7 @@ function renderSheet() {
     <h3>Pourquoi ce score</h3>
     ${explain(p)}
     <p class="note">Les gains appliquent la formule à un seul indicateur. Ils dépendent des bornes : la scolarisation, aux bornes très serrées, réagit fortement à un petit écart. Ce n'est ni un coût ni une recommandation d'investissement.</p>
-    <h3>Simuler une amélioration</h3>
+    <h3 id="simulateur">Simuler une amélioration</h3>
     <div class="result">${active ? `Simulation, pas une mesure. Le score passe de ${fmt(p.score)} à <b>${fmt(s)}</b> et le rang de ${p.rank} à <b>${rank}</b>. Les 74 autres provinces ne changent pas.` : "Déplacez un curseur pour voir l'effet sur le score de cette province."}</div>
     ${levers}
     <button class="chip" id="sim-reset" type="button">Remettre les curseurs à zéro</button>
@@ -441,4 +433,5 @@ document.getElementById("meta").innerHTML = `<tr><th>Indicateur</th><th>Dimensio
 
 recompute(); paint(); renderList(); renderSheet(); renderCompare();
 window.__rafah = { PROV, state, select };
+if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
 </script>

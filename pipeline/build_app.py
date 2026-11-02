@@ -1,10 +1,125 @@
-"""Insère les données calculées dans la page : app/template.html -> app/index.html."""
-from pathlib import Path
+"""Construit le site statique dans app/ à partir de site/ et des résultats calculés."""
+import html
+import json
+import math
+import re
+import shutil
 import sys
+from pathlib import Path
 
 ROOT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
-page = (ROOT / "app" / "template.html").read_text(encoding="utf-8")
-for mark, name in [("__DATA__", "rafah.json"), ("__GEO__", "provinces.geojson")]:
-    page = page.replace(mark, (ROOT / "data" / "processed" / name).read_text(encoding="utf-8").replace("</", "<\\/"))
-(ROOT / "app" / "index.html").write_text(page, encoding="utf-8")
-print(f"app/index.html : {len(page) // 1024} Ko")
+SITE, APP, OUT = ROOT / "site", ROOT / "app", ROOT / "data" / "processed"
+DATA = json.loads((OUT / "rafah.json").read_text(encoding="utf-8"))
+GEO_TEXT = (OUT / "provinces.geojson").read_text(encoding="utf-8")
+CSS = (SITE / "site.css").read_text(encoding="utf-8")
+FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap">'
+HEAD = '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="claude:viewport-fit-sides" content="cover">\n'
+NAV = [("index", "Accueil"), ("comprendre", "Comprendre Rafah"), ("explorer", "Explorer"), ("indicateurs", "Indicateurs"), ("analyses", "Analyses"),
+       ("explorer.html#simulateur", "Simulateur"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("apropos", "À propos")]
+DIM_TEXT = ["Médecins, centres de soins primaires et lits d'hôpital.", "Analphabétisme, scolarisation et niveau d'études.", "Chômage, emploi salarié et établissements économiques.",
+            "Assainissement, électricité et logements sommaires.", "Eau courante, combustible de cuisson et collecte des déchets.", "Égalité femmes-hommes, activité des femmes et enclavement."]
+NOTES = {"salaries": "Remplace les salariés CNSS, publiés par région.", "enclavement": "Remplace les jeunes ni en emploi ni en études, non publiés par province.",
+         "scolarisation": "Les 12-14 ans ne sont pas publiés.", "secondaire": "Toute la population publiée, pas seulement les 25 ans et plus.",
+         "eau": "Eau courante dans le logement.", "electricite": "Électricité dans le logement.", "lits": "Public et privé, selon le lieu d'implantation.", "medecins": "Public et privé, selon le lieu d'exercice."}
+fr = lambda x, d=1: f"{x:,.{d}f}".replace(",", " ").replace(".", ",")
+
+
+def rafah(v):
+    def n(x, i):
+        r = (x - i["L"]) if i["sens"] > 0 else (i["U"] - x)
+        return min(100, max(1, 1 + 99 * r / (i["U"] - i["L"])))
+    dims = [sum(n(v[i["id"]], i) for i in DATA["indicators"] if i["dim"] == k) / 3 for k in range(6)]
+    return math.exp(sum(map(math.log, dims)) / 6)
+
+
+SCORES = {p["code"]: rafah(p["v"]) for p in DATA["provinces"]}
+BY = {p["nom"]: p for p in DATA["provinces"]}
+
+
+def nav(active):
+    links = []
+    for key, label in NAV:
+        href = key if "." in key else key + ".html"
+        cur = ' aria-current="page"' if key == active else ""
+        links.append(f'<a href="{href}"{cur}>{label}</a>')
+    return ('<header class="site-head"><div class="in"><a class="brand" href="index.html"><b>Rafah 2.0<span lang="ar" dir="rtl">رفاه</span></b>'
+            '<small>Observatoire indépendant du bien-être territorial</small></a><nav class="site-nav" aria-label="Menu principal">' + "".join(links) + "</nav></div></header>"
+            '<div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div>')
+
+
+FOOT = ('<footer class="site-foot"><div class="in"><p>Rafah 2.0. Mesurer, comprendre, agir. Prototype indépendant construit à partir de données publiques du HCP, du ministère de la Santé et de data.gov.ma.</p>'
+        '<p><a href="apropos.html">À propos</a> · <a href="methodologie.html">Méthodologie</a> · <a href="donnees.html">Sources</a> · <a href="https://github.com/Driss1929/rafah2.0">GitHub</a></p></div></footer>')
+
+
+def mini_map():
+    """Carte statique de l'accueil, colorée par classe de score."""
+    def color(s):
+        return "var(--c" + str(1 + (s >= 25) + (s >= 40) + (s >= 55) + (s >= 70)) + ")"
+    k = math.cos(math.radians(29))
+    x0, y1 = -17.6, 36.1
+    def pts(ring):
+        return "M" + "L".join(f"{(c[0] - x0) * k * 6:.1f} {(y1 - c[1]) * 6:.1f}" for c in ring) + "Z"
+    paths = []
+    for f in json.loads(GEO_TEXT)["features"]:
+        g = f["geometry"]
+        polys = [g["coordinates"]] if g["type"] == "Polygon" else g["coordinates"]
+        d = "".join(pts(r) for poly in polys for r in poly)
+        paths.append(f'<path d="{d}" fill="{color(SCORES[f["properties"]["code"]])}"/>')
+    w, h = (17.6 - .9) * k * 6, (36.1 - 20.6) * 6
+    return f'<svg viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="Carte du Maroc par province, colorée selon le score Rafah">{"".join(paths)}</svg>'
+
+
+def indicator_tables():
+    out = []
+    for k, d in enumerate(DATA["dimensions"]):
+        rows = []
+        for i in [x for x in DATA["indicators"] if x["dim"] == k]:
+            note = f'<br><small>{NOTES[i["id"]]}</small>' if i["id"] in NOTES else ""
+            rows.append(f'<tr><td>{i["label"]}{note}</td><td class="n">{"+" if i["sens"] > 0 else "−"}</td><td>{i["unit"]}</td><td>{i["source"]}</td><td>Province</td><td>{"Oui" if i["lever"] else "Non"}</td><td class="n">{fr(i["L"])} à {fr(i["U"])}</td><td>{i["bornes"]}</td></tr>')
+        out.append(f'<section><h2>{d}</h2><p>{DIM_TEXT[k]}</p><div class="scroll"><table><tr><th>Indicateur</th><th class="n">Sens</th><th>Unité</th><th>Source et année</th><th>Niveau</th><th>Levier</th><th class="n">Bornes</th><th>Base des bornes</th></tr>{"".join(rows)}</table></div></section>')
+    return "".join(out)
+
+
+def robust():
+    head = '<tr><th>Variante</th><th class="n">Corrélation de rang</th><th class="n">Écart de rang moyen</th><th class="n">15 derniers conservés</th></tr>'
+    return head + "".join(f'<tr><td>{html.escape(r["scenario"])}</td><td class="n">{fr(r["spearman"], 2)}</td><td class="n">{fr(r["ecart_rang_moyen"])}</td><td class="n">{r["bas15_conserves"]} sur 15</td></tr>' for r in DATA["robustness"])
+
+
+def fill(text):
+    low, high = min(SCORES, key=SCORES.get), max(SCORES, key=SCORES.get)
+    names = {p["code"]: p["nom"] for p in DATA["provinces"]}
+    sb, fi, val = BY["Sidi Bennour"], BY["Figuig"], DATA["validation"]
+    values = {"min": fr(SCORES[low]), "max": fr(SCORES[high]), "min_nom": names[low], "max_nom": names[high],
+              "sb": fr(SCORES[sb["code"]]), "fi": fr(SCORES[fi["code"]]), "sb_mpi": fr(sb["mpi24"]), "fi_mpi": fr(fi["mpi24"]), "sb_eau": fr(sb["v"]["eau"]), "sb_dechets": fr(sb["v"]["dechets"]),
+              "sp": fr(val["spearman"], 2), "sp2": fr(val["spearman_sans_chevauchement"], 2), "chom_portail": fr(val["chomage_portail_pauvrete"], 2), "chom_rgph": fr(val["chomage_rgph_pauvrete"], 2),
+              "dim_cards": "".join(f'<div class="card"><h3>{d}</h3><p>{DIM_TEXT[k]}</p></div>' for k, d in enumerate(DATA["dimensions"]))}
+    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust)]:
+        if "{{" + key + "}}" in text:
+            values[key] = fn()
+    if "{{data_json}}" in text:
+        values["data_json"] = json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")
+    text = re.sub(r"\{\{(\w+)\}\}", lambda m: str(values[m[1]]), text)
+    return text
+
+
+def main():
+    for page in sorted((SITE / "pages").glob("*.html")):
+        src = page.read_text(encoding="utf-8")
+        title = re.match(r"<!-- title: (.*?) -->", src)[1]
+        body = fill(src.split("-->", 1)[1])
+        (APP / page.name).write_text(f'{HEAD}<title>{title}</title>{FONTS}<style>{CSS}</style></head><body>{nav(page.stem)}<main class="page">{body}</main>{FOOT}</body></html>\n', encoding="utf-8")
+    ex = (SITE / "explorer.template.html").read_text(encoding="utf-8")
+    for mark, value in [("__NAV__", nav("explorer")), ("__FOOT__", FOOT), ("__SITECSS__", CSS), ("__FONTS__", FONTS),
+                        ("__DATA__", json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")), ("__GEO__", GEO_TEXT.replace("</", "<\\/"))]:
+        ex = ex.replace(mark, value)
+    (APP / "explorer.html").write_text("<!doctype html>\n" + ex, encoding="utf-8")
+    dl = APP / "donnees"
+    dl.mkdir(exist_ok=True)
+    for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes"]:
+        shutil.copy(OUT / f"{f}.csv", dl / f"{f}.csv")
+    sizes = {p.name: p.stat().st_size // 1024 for p in sorted(APP.glob("*.html"))}
+    print("Pages (Ko) :", sizes)
+
+
+if __name__ == "__main__":
+    main()

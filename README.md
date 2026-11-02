@@ -6,7 +6,10 @@ Indice composite de bien-être des 75 provinces et préfectures du Maroc, avec c
 
 | Élément | Emplacement |
 |---|---|
-| Carte, fiches, simulateur, pondérations | `app/index.html` |
+| Site construit, à déployer | `app/` |
+| Accueil et pages éditoriales | `site/pages/`, `site/site.css` |
+| Carte, fiches, simulateur, pondérations | `site/explorer.template.html`, publié en `app/explorer.html` |
+| Contrôle des 75 territoires | `data/processed/audit_territoires.csv` |
 | Résultats par province | `data/processed/rafah_provinces.csv` |
 | Scores des 18 indicateurs | `data/processed/rafah_scores_indicateurs.csv` |
 | Bornes et sources | `data/processed/rafah_metadonnees.csv` |
@@ -34,6 +37,14 @@ Pour contrôler les résultats, même sans les données brutes :
 
 ```bash
 python pipeline/test_rafah.py
+```
+
+```bash
+python pipeline/audit_territoires.py
+```
+
+```bash
+python pipeline/test_site.py
 ```
 
 La page charge Leaflet depuis cdnjs et ses polices depuis Google Fonts : elle a besoin d'Internet. Le jour de la démonstration, prévoir une connexion ou le lien publié.

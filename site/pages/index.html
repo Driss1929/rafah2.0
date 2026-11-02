@@ -1,0 +1,45 @@
+<!-- title: Rafah -->
+<section class="hero">
+  <div>
+    <div class="eyebrow">Observatoire indépendant du bien-être territorial</div>
+    <h1>Le bien-être des territoires, au-delà des chiffres économiques.</h1>
+    <p class="lead">Explorer, comprendre et comparer les réalités des 75 provinces et préfectures du Maroc grâce aux données publiques.</p>
+    <a class="btn" href="explorer.html">Explorer les territoires</a>
+    <a class="btn alt" href="comprendre.html">Comprendre Rafah</a>
+  </div>
+  <div aria-label="Aperçu de la carte de l'indice">{{mini_map}}</div>
+</section>
+
+<section class="figs" aria-label="Rafah en quelques chiffres">
+  <div><b>75</b><span>provinces et préfectures</span></div>
+  <div><b>18</b><span>indicateurs</span></div>
+  <div><b>6</b><span>dimensions</span></div>
+  <div><b>{{min}} à {{max}}</b><span>écart des scores, de {{min_nom}} à {{max_nom}}</span></div>
+</section>
+
+<section>
+  <h2>Pourquoi Rafah ?</h2>
+  <div class="cols">
+    <div><h3>Rendre les disparités visibles</h3><p>Les territoires n'ont pas tous les mêmes ressources, équipements et opportunités. Rafah montre ces différences dimension par dimension.</p></div>
+    <div><h3>Regarder au-delà de l'économie</h3><p>Le revenu ne décrit pas à lui seul les conditions de vie. La santé, l'éducation, l'eau, le logement et l'inclusion comptent aussi.</p></div>
+    <div><h3>Rassembler des données dispersées</h3><p>Rafah réunit des fichiers du portail data.gov.ma, du HCP et du ministère de la Santé dans une lecture comparable d'un territoire à l'autre.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Une lecture que la pauvreté seule ne donne pas</h2>
+  <p>Sidi Bennour a un taux de pauvreté multidimensionnelle ({{sb_mpi}} %) environ deux fois plus faible que celui de Figuig ({{fi_mpi}} %). Elle se classe pourtant derrière elle, avec un score de {{sb}} contre {{fi}} : seuls {{sb_eau}} % de ses ménages ont l'eau courante et {{sb_dechets}} % voient leurs déchets collectés.</p>
+  <a href="explorer.html">Ouvrir la fiche de Sidi Bennour</a>
+</section>
+
+<section>
+  <h2>Les six dimensions du bien-être</h2>
+  <div class="cols" style="grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))">{{dim_cards}}</div>
+  <p><a href="indicateurs.html">Voir les 18 indicateurs et leurs sources</a></p>
+</section>
+
+<section class="cols">
+  <div class="card"><h3>Méthodologie</h3><p>Normalisation à bornes fixes, moyenne dans chaque dimension, moyenne géométrique entre dimensions, tests de robustesse publiés.</p><a href="methodologie.html">Lire la méthode</a></div>
+  <div class="card"><h3>Analyses comparatives</h3><p>Classements filtrables, écarts par dimension, comparaison des régions et export des résultats.</p><a href="analyses.html">Comparer les territoires</a></div>
+  <div class="card"><h3>Données et ressources</h3><p>Résultats à télécharger, sources de chaque indicateur et audit des 75 territoires.</p><a href="donnees.html">Accéder aux données</a></div>
+</section>
