@@ -1,0 +1,77 @@
+# Rafah en ligne : FastAPI, PostGIS et GeoServer derrière un proxy HTTPS.
+# PostGIS et l'administration de GeoServer ne sont jamais exposés sur Internet.
+services:
+  db:
+    image: postgis/postgis:18-3.6
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rafah
+      POSTGRES_USER: rafah
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant}
+    volumes:
+      - db_data:/var/lib/postgresql
+      - ../infra/rafah_postgis.sql:/docker-entrypoint-initdb.d/20_rafah.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rafah -d rafah"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/api.Dockerfile
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+
+  geoserver:
+    image: docker.osgeo.org/geoserver:3.0.2
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SKIP_DEMO_DATA: "true"
+      GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN_USER:?GEOSERVER_ADMIN_USER manquant}
+      GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_ADMIN_PASSWORD:?GEOSERVER_ADMIN_PASSWORD manquant}
+      PROXY_BASE_URL: https://geoserver.${DOMAIN:?DOMAIN manquant}/geoserver
+      EXTRA_JAVA_OPTS: -Xms256m -Xmx1g
+    volumes:
+      - geoserver_data:/opt/geoserver_data
+
+  geoserver-config:
+    image: alpine:3.20
+    depends_on:
+      db:
+        condition: service_healthy
+      geoserver:
+        condition: service_started
+    environment:
+      GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN_USER}
+      GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_ADMIN_PASSWORD}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./configure_geoserver.sh:/configure_geoserver.sh:ro
+    entrypoint: ["sh", "/configure_geoserver.sh"]
+    restart: "no"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [api, geoserver]
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  db_data:
+  geoserver_data:
+  caddy_data:
+  caddy_config:

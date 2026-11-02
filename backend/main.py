@@ -8,12 +8,14 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "api" / "v1"
 Dimension = Literal["overall", "health", "education", "employment", "housing", "water_environment", "social_inclusion"]
 
-app = FastAPI(title="API interne Rafah", version="1.0.0", description="Usage interne et local. Résultats non officiels. L'identifiant est le code géographique HCP.")
+app = FastAPI(title="API Rafah", version="1.0.0", description="Projet indépendant, lecture seule. Résultats non officiels. L'identifiant est le code géographique HCP.")
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
 
 
 def load(rel):

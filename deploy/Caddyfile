@@ -1,0 +1,23 @@
+# Certificats HTTPS automatiques. Seule la lecture est publique.
+api.{$DOMAIN} {
+	encode gzip
+	@write not method GET HEAD OPTIONS
+	respond @write 405
+	reverse_proxy api:8000
+}
+
+geoserver.{$DOMAIN} {
+	encode gzip
+	# Administration fermée au public : on y accède par un tunnel SSH.
+	@admin path /geoserver/web* /geoserver/rest* /geoserver/j_spring* /geoserver/index.html
+	respond @admin 403
+	# Lecture de la couche uniquement.
+	@services {
+		path /geoserver/rafah/ows* /geoserver/rafah/wms* /geoserver/rafah/wfs* /geoserver/ows* /geoserver/wms* /geoserver/wfs*
+		method GET HEAD
+	}
+	handle @services {
+		reverse_proxy geoserver:8080
+	}
+	respond 403
+}
