@@ -47,7 +47,9 @@ python pipeline/audit_territoires.py
 python pipeline/test_site.py
 ```
 
-La page charge Leaflet depuis cdnjs et ses polices depuis Google Fonts : elle a besoin d'Internet. Le jour de la démonstration, prévoir une connexion ou le lien publié.
+Leaflet 1.9.4 (licence BSD-2-Clause) est servi depuis `app/vendor/`. Seules les polices viennent de Google Fonts, avec une police système de secours si le réseau manque. Pour une démonstration hors ligne, lancez un petit serveur local dans `app/`.
+
+Après un recalcul : `build_index.py`, `audit_territoires.py`, `audit_independant.py`, `provenance.py`, `build_app.py`, puis les tests. Le résultat de l'audit est décrit dans `docs/AUDIT.md`.
 
 ## Sources (`data/raw/`)
 

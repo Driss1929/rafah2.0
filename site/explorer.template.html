@@ -167,7 +167,7 @@ __NAV__
 __FOOT__
 <script id="data" type="application/json">__DATA__</script>
 <script id="geo" type="application/json">__GEO__</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="vendor/leaflet.js"></script>
 <script>
 const DATA = JSON.parse(document.getElementById("data").textContent);
 const GEO = JSON.parse(document.getElementById("geo").textContent);
@@ -272,6 +272,12 @@ function ctxTable(p) {
   return `<table>${rows.map(r => `<tr><td>${r[0]}</td><td class="n">${r[1]}</td></tr>`).join("")}</table>`;
 }
 
+if (!window.L) {
+  // Sans bibliothèque de carte, la liste, les fiches et le simulateur restent utilisables.
+  document.getElementById("map").textContent = "La carte n'a pas pu se charger. Utilisez la liste des provinces : les fiches et le simulateur fonctionnent.";
+  const none = { fitBounds() {}, on() {}, invalidateSize() {}, addTo() { return this; }, eachLayer() {} };
+  window.L = { map: () => none, geoJSON: () => none };
+}
 const map = L.map("map", { zoomSnap: .25, attributionControl: false, minZoom: 4 });
 const shapes = L.geoJSON(GEO, {
   style: f => ({ weight: .7, color: "var(--land-line)", fillOpacity: 1 }),
@@ -388,7 +394,8 @@ function renderSheet() {
     <p class="note">Pauvreté multidimensionnelle (HCP) : ${fmt(p.mpi14)} % en 2014, ${fmt(p.mpi24)} % en 2024.</p>
     ${spark(p.ene.chomage)}
     ${p.flags.map(f => `<p class="flag">${f}</p>`).join("")}
-    <p class="note">Fiabilité des données : <span class="pill ${p.fiab}">${p.fiab}</span>${p.fiabRaisons.length ? " " + p.fiabRaisons.join(". ") + "." : " Aucune valeur imputée, population suffisante, rang stable."}</p>
+    <p class="note">Années des données du score : recensement 2024, santé 2024, établissements économiques 2023/2024.</p>
+    <p class="note">Valeurs publiées ou calculées : ${p.couverture} sur 18. Fiabilité des données : <span class="pill ${p.fiab}">${p.fiab}</span>${p.fiabRaisons.length ? " " + p.fiabRaisons.join(". ") + "." : " Aucune valeur imputée, population suffisante, rang stable."}</p>
     <h3>Pourquoi ce score</h3>
     ${explain(p)}
     <p class="note">Les gains appliquent la formule à un seul indicateur. Ils dépendent des bornes : la scolarisation, aux bornes très serrées, réagit fortement à un petit écart. Ce n'est ni un coût ni une recommandation d'investissement.</p>
@@ -421,9 +428,19 @@ CMP.codes.forEach((c, k) => {
 
 document.getElementById("layer").innerHTML = `<option value="rafah">Indice Rafah</option>` + DIMS.map((d, k) => `<option value="${k}">${d}</option>`).join("") + `<option value="mpi">Pauvreté multidimensionnelle du HCP (hors indice)</option>` + Object.entries(CTX).map(([k, c]) => `<option value="${k}">${c.label}</option>`).join("");
 document.getElementById("layer").onchange = e => { state.layer = e.target.value; paint(); };
-document.getElementById("weights").innerHTML = DIMS.map((d, k) => `<div><label for="w-${k}">${d}</label><input id="w-${k}" type="range" min="0" max="3" step=".25" value="1" data-k="${k}"></div>`).join("");
+document.getElementById("weights").innerHTML = DIMS.map((d, k) => `<div><label for="w-${k}">${d} : <output id="wp-${k}"></output></label><input id="w-${k}" type="range" min="0" max="3" step=".25" value="1" data-k="${k}"></div>`).join("");
 document.getElementById("weights").addEventListener("input", e => { state.weights[+e.target.dataset.k] = +e.target.value; refresh(); });
-document.getElementById("w-reset").onclick = () => { state.weights = DIMS.map(() => 1); document.querySelectorAll("#weights input").forEach(i => i.value = 1); refresh(); };
+function showWeights() {
+  const t = state.weights.reduce((a, b) => a + b, 0);
+  state.weights.forEach((w, k) => document.getElementById("wp-" + k).textContent = fmt(w / t * 100) + " %");
+}
+document.getElementById("weights").addEventListener("input", e => {
+  // Au moins une dimension doit garder un poids, sinon l'indice n'a plus de sens.
+  if (state.weights.every(w => w === 0)) { state.weights[+e.target.dataset.k] = .25; e.target.value = .25; refresh(); }
+  showWeights();
+});
+document.getElementById("w-reset").onclick = () => { state.weights = DIMS.map(() => 1); document.querySelectorAll("#weights input").forEach(i => i.value = 1); refresh(); showWeights(); };
+showWeights();
 
 const V = DATA.validation;
 document.getElementById("ene-note").textContent = `Le chômage de l'enquête emploi du portail reste hors score. Il manque pour 4 provinces et sa corrélation de rang avec la pauvreté est de ${fmt(V.chomage_portail_pauvrete, 2)} : il est plus faible dans les provinces rurales pauvres, où le recensement donne une image différente (${fmt(V.chomage_rgph_pauvrete, 2)}).`;

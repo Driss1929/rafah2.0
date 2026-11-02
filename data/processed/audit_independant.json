@@ -1,0 +1,140 @@
+{
+ "territoires": 75,
+ "ecart_max_valeurs": 0.0004991839803422105,
+ "indicateurs_divergents": {},
+ "ecart_max_bornes": 0.0004763825439795255,
+ "scores_indicateurs_compares": 1350,
+ "ecart_max_scores_indicateurs": 0.004995425434529466,
+ "scores_dimensions_compares": 450,
+ "ecart_max_dimensions": 0.049928858155873,
+ "indices_compares": 75,
+ "ecart_max_indice": 0.04926980738179765,
+ "rangs_differents": 0,
+ "ecart_max_site_vs_calcul": 0.008070174900851157,
+ "statuts_complets": true,
+ "etablissements_total_ok": true,
+ "carte": {
+  "chefs_lieux_testes": 75,
+  "dans_leur_polygone": 75,
+  "en_bord_de_cote": [],
+  "a_examiner": []
+ },
+ "paires_redondantes": [
+  [
+   "assainissement",
+   "dechets",
+   0.92
+  ],
+  [
+   "secondaire",
+   "dechets",
+   0.91
+  ],
+  [
+   "secondaire",
+   "assainissement",
+   0.89
+  ],
+  [
+   "analphabetisme",
+   "secondaire",
+   0.88
+  ],
+  [
+   "analphabetisme",
+   "activite_f",
+   0.87
+  ],
+  [
+   "analphabetisme",
+   "dechets",
+   0.84
+  ],
+  [
+   "secondaire",
+   "activite_f",
+   0.84
+  ],
+  [
+   "assainissement",
+   "activite_f",
+   0.83
+  ],
+  [
+   "dechets",
+   "activite_f",
+   0.83
+  ],
+  [
+   "etablissements",
+   "dechets",
+   0.82
+  ],
+  [
+   "etablissements",
+   "assainissement",
+   0.81
+  ]
+ ],
+ "alpha_cronbach": {
+  "Santé": 0.24,
+  "Éducation": 0.74,
+  "Emploi et revenus": 0.59,
+  "Logement et services de base": 0.3,
+  "Eau et cadre de vie": 0.71,
+  "Inclusion sociale": 0.62
+ },
+ "correlation_reste_de_dimension": {
+  "Santé": {
+   "medecins": 0.3,
+   "essp": -0.31,
+   "lits": 0.52
+  },
+  "Éducation": {
+   "analphabetisme": 0.82,
+   "scolarisation": 0.27,
+   "secondaire": 0.79
+  },
+  "Emploi et revenus": {
+   "chomage": 0.32,
+   "salaries": 0.84,
+   "etablissements": 0.17
+  },
+  "Logement et services de base": {
+   "assainissement": 0.26,
+   "electricite": 0.54,
+   "bidonville": -0.15
+  },
+  "Eau et cadre de vie": {
+   "eau": 0.6,
+   "bois": 0.6,
+   "dechets": 0.86
+  },
+  "Inclusion sociale": {
+   "ecart_alpha": 0.56,
+   "activite_f": 0.66,
+   "enclavement": 0.33
+  }
+ },
+ "indicateurs_negatifs_dans_leur_dimension": [
+  "essp",
+  "bidonville"
+ ],
+ "variantes": {
+  "Bornes homogènes : centiles 5-95 partout": {
+   "spearman": 0.998,
+   "bas15": 15,
+   "pauvrete": -0.912
+  },
+  "Scores z, moyenne arithmétique": {
+   "spearman": 0.988,
+   "bas15": 13,
+   "pauvrete": -0.935
+  },
+  "Inclusion sans la distance à la route": {
+   "spearman": 0.984,
+   "bas15": 12,
+   "pauvrete": -0.896
+  }
+ }
+}

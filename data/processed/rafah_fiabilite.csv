@@ -2,7 +2,7 @@
 1511,Tanger-Assilah,Élevée,
 1573,M'diq-Fnideq,Moyenne,Rang sensible aux pondérations : 20 à 45
 1571,Tétouan,Élevée,
-1227,Fahs-Anjra,Prudence,Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère ; Moins de 100 000 habitants : ratios instables ; Rang sensible aux pondérations : 48 à 69
+1227,Fahs-Anjra,Prudence,"Lits : 0 déduit d'un ratio vide dans la carte sanitaire et de l'absence d'hôpital public listé, à confirmer ; Moins de 100 000 habitants : ratios instables ; Rang sensible aux pondérations : 48 à 69"
 1331,Larache,Élevée,
 1051,Al Hoceima,Moyenne,Rang sensible aux pondérations : 50 à 67
 1151,Chefchaouen,Élevée,
@@ -19,7 +19,7 @@
 3061,Meknès,Élevée,
 3171,El Hajeb,Moyenne,Rang sensible aux pondérations : 43 à 58
 3271,Ifrane,Élevée,
-3591,Moulay Yacoub,Moyenne,Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère
+3591,Moulay Yacoub,Moyenne,"Lits : 0 déduit d'un ratio vide dans la carte sanitaire et de l'absence d'hôpital public listé, à confirmer"
 3451,Sefrou,Élevée,
 3131,Boulemane,Élevée,
 3531,Taounate,Élevée,
@@ -73,4 +73,4 @@
 11537,Tarfaya,Prudence,Moins de 100 000 habitants : ratios instables
 11221,Es-Semara,Prudence,Moins de 100 000 habitants : ratios instables
 12391,Oued Ed-Dahab,Élevée,
-12066,Aousserd,Prudence,Médecins : valeur régionale utilisée ; Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère ; Moins de 100 000 habitants : ratios instables
+12066,Aousserd,Prudence,"Médecins : valeur régionale utilisée ; Lits : 0 déduit d'un ratio vide dans la carte sanitaire et de l'absence d'hôpital public listé, à confirmer ; Moins de 100 000 habitants : ratios instables"

@@ -66,6 +66,18 @@ def test_simulation_isolee():
     assert all(avant[p["code"]] == rafah(p["v"]) for p in PROV[1:])
 
 
+def test_valeurs_possibles():
+    for p in PROV:
+        assert p["population"] > 0 and p["region"] and p["type"] in ("Province", "Préfecture"), p["nom"]
+        for i in INDS:
+            x = p["v"][i["id"]]
+            assert isinstance(x, (int, float)) and math.isfinite(x) and x >= 0, (p["nom"], i["id"])
+            if i["unit"] == "%":
+                assert x <= 100, (p["nom"], i["id"])
+    for i in INDS:
+        assert i["U"] > i["L"], i["id"]
+
+
 def test_statuts():
     by = {p["nom"]: p for p in PROV}
     assert by["Aousserd"]["status"]["medecins"] == "imputé" and by["Aousserd"]["fiab"] == "Prudence"

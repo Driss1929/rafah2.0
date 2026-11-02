@@ -18,6 +18,7 @@
     <div><label for="f-q">Province ou préfecture</label><input id="f-q" type="search" placeholder="Taza, Casablanca…"></div>
     <div><label>&nbsp;</label><button class="chip" id="export" type="button">Exporter ce tableau (CSV)</button></div>
   </div>
+  <p style="font-size:.88rem;margin:0 0 6px"><b>Fiabilité :</b> Prudence si une valeur est imputée ou si le territoire compte moins de 100 000 habitants. Moyenne en cas de 0 déduit ou de rang sensible aux poids. Élevée sinon. C'est un repère de lecture, pas une marge d'erreur.</p>
   <p id="count" style="font-size:.88rem;margin:0 0 6px"></p>
   <div class="scroll"><table id="rank"></table></div>
 </section>
@@ -38,7 +39,7 @@ for (const p of PROV) {
 [...PROV].sort((a, b) => b.score - a.score).forEach((p, n) => p.rank = n + 1);
 const state = { key: "rank", dir: 1 };
 const COLS = [["rank", "Rang", p => p.rank], ["nom", "Territoire", p => p.nom], ["region", "Région", p => p.region], ["score", "Rafah", p => p.score, 1],
-  ...DIMS.map((d, k) => ["d" + k, d, p => p.dims[k], 1]), ["mpi24", "Pauvreté HCP 2024 (%)", p => p.mpi24, 1], ["fiab", "Fiabilité", p => p.fiab]];
+  ...DIMS.map((d, k) => ["d" + k, d, p => p.dims[k], 1]), ["mpi24", "Pauvreté HCP 2024 (%)", p => p.mpi24, 1], ["fiab", "Fiabilité", p => p.fiab], ["couv", "Valeurs publiées ou calculées", p => p.couverture + "/18"], ["why", "Raisons", p => p.fiabRaisons.join(". ") || "Aucune réserve"]];
 const clean = s => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 function rows() {
   const r = document.getElementById("f-region").value, f = document.getElementById("f-fiab").value, q = clean(document.getElementById("f-q").value.trim());

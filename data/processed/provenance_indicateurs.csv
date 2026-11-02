@@ -1,0 +1,19 @@
+﻿indicateur,libelle,fichier_source,variables_origine,transformation,borne_basse,borne_haute,base_des_bornes
+medecins,Médecins (public + privé) pour 10 000 habitants,cartesanitaire_2024.csv,"Ratio Habitants par medecin (Public + Privé), 2024",10 000 / ratio. Casablanca : somme de 8 délégations reconstituée par population / ratio. Aousserd : valeur de sa région.,1.866,17.849,centiles 5-95 (2024)
+essp,Établissements de soins primaires pour 10 000 habitants,datagov/essp-2024.xlsx,"Lignes CSU-1, CSU-2, CSR-1, CSR-2, DR",Nombre de lignes / population municipale × 10 000. Casablanca : somme de 8 délégations.,0.333,3.391,centiles 5-95 (2024)
+lits,Lits d'hôpital (public + privé) pour 10 000 habitants,cartesanitaire_2024.csv,"Ratio Habitants par lit hospitalier (Public + Privé), 2024","10 000 / ratio. Ratio vide compté 0 (Fahs-Anjra, Moulay Yacoub, Aousserd).",1.138,28.758,centiles 5-95 (2024)
+analphabetisme,Taux d'analphabétisme (10 ans et plus),hcp_national_242671.xlsx,"Feuille Population, Sexe : Ensemble, Taux d'analphabétisme des 10 ans et plus",Repris tel quel.,0.0,39.23,ODD 4.6
+scolarisation,Taux de scolarisation des 6-11 ans,hcp_national_242671.xlsx,"Feuille Population, Sexe : Ensemble, Taux de scolarisation des 6-11 ans en 2023/2024",Repris tel quel.,94.01,100.0,ODD 4.1
+secondaire,Population de niveau secondaire ou supérieur,hcp_national_242671.xlsx,"Feuille Population, Sexe : Ensemble, Niveau d'études : Secondaire collégial, Secondaire qualifiant, Supérieur",Somme des trois parts.,25.69,49.57,centiles 5-95 (2024)
+chomage,Taux de chômage,hcp_national_242671.xlsx,"Feuille Population, Sexe : Ensemble, Taux de chômage",Repris tel quel.,15.44,35.4,centiles 5-95 (2024)
+salaries,Salariés (public + privé) pour 1 000 habitants,hcp_national_242671.xlsx,"Feuille Population, Sexe : Ensemble, Population active occupée ; Statut : Salarié public, Salarié privé ; Population municipale",Actifs occupés × part de salariés / population municipale × 1 000.,89.546,225.817,centiles 5-95 (2024)
+etablissements,Établissements économiques pour 1 000 habitants,hcp_cee_242672.xlsx,"Nombre d'établissements à but lucratif, ligne province",Nombre / population municipale × 1 000.,16.88,45.031,centiles 5-95 (2024)
+assainissement,Ménages raccordés à l'assainissement,hcp_national_242671.xlsx,"Feuille Ménages, Réseau public d'assainissement",Repris tel quel.,20.02,100.0,ODD 6.2
+electricite,Ménages disposant de l'électricité,hcp_national_242671.xlsx,"Feuille Ménages, Éléments de confort : Électricité",Repris tel quel.,93.99,100.0,ODD 7.1
+bidonville,Logements de type sommaire ou bidonville,hcp_national_242671.xlsx,"Feuille Ménages, Type de logement : Maison sommaire / Bidonville",Repris tel quel.,0.0,10.93,ODD 11.1
+eau,Ménages disposant de l'eau courante,hcp_national_242671.xlsx,"Feuille Ménages, Éléments de confort : Eau courante",Repris tel quel.,37.5,100.0,ODD 6.1
+bois,Ménages cuisinant au bois ou au charbon,hcp_national_242671.xlsx,"Feuille Ménages, Combustible de cuisson : Charbon, Bois énergie",Somme des deux parts.,0.0,20.5,ODD 7.1
+dechets,Ménages dont les déchets sont collectés,hcp_national_242671.xlsx,"Feuille Ménages, Déchets : Bac à ordures de la commune, Camion de la commune / Camion privé",Somme des deux parts.,27.33,100.0,ODD 11.6
+ecart_alpha,Écart d'analphabétisme femmes-hommes,hcp_national_242671.xlsx,"Feuille Population, Taux d'analphabétisme des 10 ans et plus, Féminin et Masculin","Féminin − Masculin, en points.",0.0,24.09,ODD 4.5
+activite_f,Taux d'activité des femmes,hcp_national_242671.xlsx,"Feuille Population, Sexe : Féminin, Taux d'activité des 15 ans et plus",Repris tel quel.,5.94,26.07,centiles 5-95 (2024)
+enclavement,Distance moyenne des logements à la route goudronnée,hcp_national_242671.xlsx,"Feuille Ménages, Distance moyenne des logements à la route goudronnée","Repris tel quel. « … » (Rabat, Casablanca) compté 0 km.",0.47,3.52,centiles 5-95 (2024)

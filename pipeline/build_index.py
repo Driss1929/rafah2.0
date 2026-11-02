@@ -454,7 +454,7 @@ def main():
             reasons.append("Médecins : valeur régionale utilisée")
         if r.lits == 0:
             status["lits"] = "déduit"
-            reasons.append("Lits : 0 déduit de l'absence d'hôpital dans la liste du ministère")
+            reasons.append("Lits : 0 déduit d'un ratio vide dans la carte sanitaire et de l'absence d'hôpital public listé, à confirmer")
         if r._enclavement_na:
             status["enclavement"] = "convention"
         small = r.population < 100000
@@ -464,7 +464,7 @@ def main():
         if hi - lo >= 15:
             reasons.append(f"Rang sensible aux pondérations : {lo} à {hi}")
         fiab = "Prudence" if r._imput_medecins or small else "Moyenne" if reasons else "Élevée"
-        provinces.append(dict(code=int(c), nom=r.nom, type=r.type, region=r.region, population=int(r.population), status=status, fiab=fiab, fiabRaisons=reasons,
+        provinces.append(dict(code=int(c), nom=r.nom, type=r.type, region=r.region, population=int(r.population), status=status, fiab=fiab, fiabRaisons=reasons, couverture=sum(s in ("publié", "calculé") for s in status.values()),
                               v={i: round(float(r[i]), 3) for i in IDS}, mpi24=round(r.mpi_2024, 1), mpi14=round(r.mpi_2014, 1),
                               ctx={k: (None if pd.isna(x) else round(float(x), 3)) for k, x in ctx.loc[c].items()},
                               ene={k: [None if (c not in s.index or pd.isna(x)) else float(x) for x in (s.loc[c] if c in s.index else [None] * 9)] for k, s in ene.items()},

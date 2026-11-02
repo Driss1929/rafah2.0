@@ -2,7 +2,7 @@
 <section>
   <div class="eyebrow">Construction et validation</div>
   <h1>Méthodologie</h1>
-  <p class="lead">L'indice suit les lignes directrices OCDE-JRC pour les indicateurs composites. Chaque étape est reproductible à partir du code public.</p>
+  <p class="lead">L'indice suit les lignes directrices OCDE-JRC pour les indicateurs composites. Il mesure des conditions territoriales associées au bien-être, pas le bien-être vécu par les habitants.</p>
 </section>
 <section>
   <h2>Du chiffre brut à l'indice</h2>
@@ -36,7 +36,7 @@
   <h2>Valeurs manquantes et statut des données</h2>
   <ul>
     <li><b>Imputé :</b> les médecins d'Aousserd reprennent la valeur de leur région. C'est la seule valeur imputée.</li>
-    <li><b>Déduit :</b> 0 lit à Fahs-Anjra, Moulay Yacoub et Aousserd, où la liste du ministère ne recense aucun hôpital.</li>
+    <li><b>Déduit :</b> 0 lit à Fahs-Anjra, Moulay Yacoub et Aousserd. Le ratio de la carte sanitaire y est vide et aucun hôpital public n'y est listé. Ce zéro reste à confirmer : une liste administrative ne prouve pas l'absence d'un équipement.</li>
     <li><b>Convention :</b> enclavement compté 0 km à Rabat et à Casablanca, où le HCP l'indique sans objet.</li>
     <li><b>Fiabilité :</b> Prudence si une valeur est imputée ou si la population est inférieure à 100 000 habitants ; Moyenne en cas de 0 déduit ou de fourchette de rang d'au moins 15 places ; Élevée sinon. Ces seuils sont des conventions du projet, pas une mesure statistique de l'erreur.</li>
   </ul>
@@ -49,6 +49,7 @@
   <h2>Robustesse</h2>
   <div class="scroll"><table>{{robust}}</table></div>
 </section>
+{{audit_block}}
 <section id="limites">
   <h2>Limites et précautions de lecture</h2>
   <ul>

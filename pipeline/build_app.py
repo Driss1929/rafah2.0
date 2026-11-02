@@ -47,7 +47,7 @@ def nav(active):
             '<div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div>')
 
 
-FOOT = ('<footer class="site-foot"><div class="in"><p>Rafah 2.0. Mesurer, comprendre, agir. Prototype indépendant construit à partir de données publiques du HCP, du ministère de la Santé et de data.gov.ma.</p>'
+FOOT = ('<footer class="site-foot"><div class="in"><p>Rafah 2.0. Mesurer, comprendre, agir. Prototype indépendant construit à partir de données publiques du HCP, du ministère de la Santé et de data.gov.ma. Données extraites le 2 novembre 2026.</p>'
         '<p><a href="apropos.html">À propos</a> · <a href="methodologie.html">Méthodologie</a> · <a href="donnees.html">Sources</a> · <a href="https://github.com/Driss1929/rafah2.0">GitHub</a></p></div></footer>')
 
 
@@ -85,6 +85,31 @@ def robust():
     return head + "".join(f'<tr><td>{html.escape(r["scenario"])}</td><td class="n">{fr(r["spearman"], 2)}</td><td class="n">{fr(r["ecart_rang_moyen"])}</td><td class="n">{r["bas15_conserves"]} sur 15</td></tr>' for r in DATA["robustness"])
 
 
+def audit_block():
+    a = json.loads((OUT / "audit_independant.json").read_text(encoding="utf-8"))
+    labels = {i["id"]: i["label"] for i in DATA["indicators"]}
+    alpha = "".join(f'<tr><td>{d}</td><td class="n">{fr(v, 2)}</td></tr>' for d, v in a["alpha_cronbach"].items())
+    var = "".join(f'<tr><td>{k}</td><td class="n">{fr(v["spearman"], 3)}</td><td class="n">{v["bas15"]} sur 15</td><td class="n">{fr(v["pauvrete"], 2)}</td></tr>' for k, v in a["variantes"].items())
+    neg = " et ".join(f"« {labels[i]} »" for i in a["indicateurs_negatifs_dans_leur_dimension"])
+    return f'''<section id="audit">
+  <h2>Recalcul de contrôle</h2>
+  <p>Un second script, sans code commun avec le calcul, repart des fichiers bruts et retrouve les colonnes par leur intitulé. Il a été écrit dans le cadre du même projet : c'est un contrôle de reproductibilité, pas une relecture externe.</p>
+  <ul>
+    <li>{a["territoires"]} territoires, {a["scores_indicateurs_compares"]} scores d'indicateurs, {a["scores_dimensions_compares"]} scores de dimensions et {a["indices_compares"]} indices comparés.</li>
+    <li>Écart maximal sur l'indice : {fr(a["ecart_max_indice"], 2)} point, dû à l'arrondi à une décimale des résultats publiés. {a["rangs_differents"]} rang différent.</li>
+    <li>Les {a["carte"]["chefs_lieux_testes"]} chefs-lieux, placés à partir de coordonnées approximatives, tombent dans le contour du bon territoire.</li>
+  </ul>
+  <h3>Autres normalisations testées</h3>
+  <div class="scroll"><table><tr><th>Variante</th><th class="n">Corrélation de rang avec l'indice</th><th class="n">15 derniers conservés</th><th class="n">Corrélation avec la pauvreté</th></tr>{var}</table></div>
+  <h3>Cohérence des dimensions</h3>
+  <p>Certaines dimensions réunissent des aspects différents, et leur alpha de Cronbach reste faible. Dans ce type d'indice, un alpha faible n'invalide pas la dimension, mais il montre que ses indicateurs ne mesurent pas une seule et même chose. Deux indicateurs, {neg}, évoluent même en sens inverse du reste de leur dimension. Les causes restent à étudier.</p>
+  <div class="scroll" style="max-width:420px"><table><tr><th>Dimension</th><th class="n">Alpha de Cronbach</th></tr>{alpha}</table></div>
+  <h3>Redondance</h3>
+  <p>{len(a["paires_redondantes"])} paires d'indicateurs ont une corrélation de rang d'au moins 0,8, la plus forte étant de {fr(a["paires_redondantes"][0][2], 2)} entre « {labels[a["paires_redondantes"][0][0]]} » et « {labels[a["paires_redondantes"][0][1]]} ». Ces conditions de vie vont souvent de pair, en lien avec l'urbanisation, ce qui peut donner plus de poids à cet écart ville-campagne. Aucun indicateur n'a été retiré à ce stade.</p>
+  <p>La distance à la route mesure l'accessibilité physique plus que l'inclusion sociale. Sans elle, le classement reste proche, mais 3 des 15 derniers territoires changent : ce choix reste à discuter avec des relecteurs.</p>
+</section>'''
+
+
 def fill(text):
     low, high = min(SCORES, key=SCORES.get), max(SCORES, key=SCORES.get)
     names = {p["code"]: p["nom"] for p in DATA["provinces"]}
@@ -93,7 +118,7 @@ def fill(text):
               "sb": fr(SCORES[sb["code"]]), "fi": fr(SCORES[fi["code"]]), "sb_mpi": fr(sb["mpi24"]), "fi_mpi": fr(fi["mpi24"]), "sb_eau": fr(sb["v"]["eau"]), "sb_dechets": fr(sb["v"]["dechets"]),
               "sp": fr(val["spearman"], 2), "sp2": fr(val["spearman_sans_chevauchement"], 2), "chom_portail": fr(val["chomage_portail_pauvrete"], 2), "chom_rgph": fr(val["chomage_rgph_pauvrete"], 2),
               "dim_cards": "".join(f'<div class="card"><h3>{d}</h3><p>{DIM_TEXT[k]}</p></div>' for k, d in enumerate(DATA["dimensions"]))}
-    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust)]:
+    for key, fn in [("mini_map", mini_map), ("indicator_tables", indicator_tables), ("robust", robust), ("audit_block", audit_block)]:
         if "{{" + key + "}}" in text:
             values[key] = fn()
     if "{{data_json}}" in text:
@@ -115,7 +140,7 @@ def main():
     (APP / "explorer.html").write_text("<!doctype html>\n" + ex, encoding="utf-8")
     dl = APP / "donnees"
     dl.mkdir(exist_ok=True)
-    for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes"]:
+    for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes", "provenance_sources", "provenance_indicateurs"]:
         shutil.copy(OUT / f"{f}.csv", dl / f"{f}.csv")
     sizes = {p.name: p.stat().st_size // 1024 for p in sorted(APP.glob("*.html"))}
     print("Pages (Ko) :", sizes)
