@@ -1,0 +1,30 @@
+<!-- title: Les 12 divisions -->
+<section>
+  <div class="eyebrow">Observatoire territorial</div>
+  <h1>Les 12 divisions de Rafah</h1>
+  <p class="lead">Douze observatoires thématiques partagent le même référentiel des 75 territoires, le même dictionnaire d'indicateurs, le même registre des sources et le même moteur d'ingestion.</p>
+  <p>Les divisions ne modifient pas l'indice Rafah : ses 18 indicateurs et ses 6 dimensions restent inchangés. Chacun de ces 18 indicateurs est simplement rattaché à la division qui le suit. Une division ouvre seulement quand ses indicateurs ont des sources traçables pour les 75 territoires.</p>
+</section>
+<section>
+  <h2>État d'avancement</h2>
+  <div class="cols" id="div-cards"></div>
+</section>
+<section>
+  <h2>Socle commun</h2>
+  <ol class="flow">
+    <li><b>Référentiel</b><span>75 territoires identifiés par leur code géographique HCP, avec contours.</span></li>
+    <li><b>Dictionnaire</b><span>Définition, formule, unité, niveau et sources de chaque indicateur.</span></li>
+    <li><b>Ingestion</b><span>Empreinte du fichier brut, rapprochement des territoires, contrôles.</span></li>
+    <li><b>Observations</b><span>Valeurs versionnées, avec un statut : publiée, calculée, zéro réel, estimée, manquante…</span></li>
+    <li><b>Publication</b><span>Pages de division, API interne et base PostGIS, depuis les mêmes fichiers.</span></li>
+  </ol>
+  <p class="fine">Fichiers : <code>data/metadata/</code> (divisions, dictionnaire, statuts), <code>pipeline/ingest.py</code> et <code>pipeline/datasets.py</code> (moteur et jeux), <code>data/observations/</code> (observations et rapports qualité), <code>infra/observatoire.sql</code> (schéma PostGIS).</p>
+</section>
+<script>
+const DIVS = {{divisions_json}};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+document.getElementById("div-cards").innerHTML = DIVS.map(d => `<div class="card"><div class="eyebrow">Division ${String(d.numero).padStart(2, "0")} · étape ${d.etape}</div>
+<h3 style="margin-top:0">${d.statut === "pilote" ? `<a href="${d.id}.html">${esc(d.nom)}</a>` : esc(d.nom)}</h3><p>${esc(d.objectif)}.</p>
+<p><span class="stat ${d.statut === "pilote" ? "ok" : "vis"}">${d.statut === "pilote" ? "pilote en ligne" : "prévue"}</span></p>
+<p class="fine">${d.catalogue ? `Catalogue : ${d.disponibles} indicateurs disponibles sur ${d.catalogue}. ` : "Catalogue à construire. "}${d.indicateurs_rafah.length ? `Indicateurs de l'indice déjà suivis : ${d.indicateurs_rafah.join(", ")}.` : "Aucun indicateur de l'indice pour l'instant."}</p></div>`).join("");
+</script>

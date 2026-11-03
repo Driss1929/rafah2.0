@@ -49,7 +49,11 @@ python pipeline/test_site.py
 
 Leaflet 1.9.4 (licence BSD-2-Clause) est servi depuis `app/vendor/`. Seules les polices viennent de Google Fonts, avec une police système de secours si le réseau manque. Pour une démonstration hors ligne, lancez un petit serveur local dans `app/`.
 
-Après un recalcul : `build_index.py`, `audit_territoires.py`, `audit_independant.py`, `provenance.py`, `build_api.py`, `build_app.py`, puis les tests.
+Après un recalcul : `build_index.py`, `audit_territoires.py`, `audit_independant.py`, `provenance.py`, `build_api.py`, `ingest.py`, `build_divisions.py`, `infra/export_postgis.py`, `build_app.py`, puis les tests (dont `test_observatoire.py`).
+
+## Divisions et observatoire
+
+Rafah prépare 12 observatoires thématiques (divisions) sur un socle commun, sans modifier l'indice. La division Santé est le pilote (`app/sante.html`). Dictionnaire et statuts : `data/metadata/`. Moteur d'ingestion : `pipeline/ingest.py`, jeux : `pipeline/datasets.py`. Observations versionnées et rapports qualité : `data/observations/`. Schéma PostGIS : `infra/observatoire.sql`. Audit technique et backlog : `docs/audit/`.
 
 Le référentiel `data/processed/referentiel_territoires.geojson` relie chaque contour au code géographique HCP, qui sert d'identifiant stable. `data/api/v1/` contient le contrat d'une API interne sous forme de fichiers JSON, décrit par `openapi.json`. Ce n'est pas un service déployé. Toute API publique attend la validation des licences, de la sécurité et des quotas. Le résultat de l'audit est décrit dans `docs/AUDIT.md`.
 

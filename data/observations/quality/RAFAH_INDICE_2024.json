@@ -1,0 +1,41 @@
+{
+ "dataset_id": "RAFAH_INDICE_2024",
+ "source_id": "S01",
+ "nature": "dérivé",
+ "fichiers": {
+  "processed/rafah.json": "6115d1e450f0af95305780f1ecc81fff3d2ad8d73bbaf57c0c96a49cb4e2d1f6"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 1350,
+ "statuts": {
+  "observe": 673,
+  "calcule": 671,
+  "zero_reel": 3,
+  "convention": 2,
+  "estime": 1
+ },
+ "couverture_pct": {
+  "activite_f 2024": 100.0,
+  "analphabetisme 2024": 100.0,
+  "assainissement 2024": 100.0,
+  "bidonville 2024": 100.0,
+  "bois 2024": 100.0,
+  "chomage 2024": 100.0,
+  "dechets 2024": 100.0,
+  "eau 2024": 100.0,
+  "ecart_alpha 2024": 100.0,
+  "electricite 2024": 100.0,
+  "enclavement 2024": 100.0,
+  "essp 2024": 100.0,
+  "etablissements 2023/2024": 100.0,
+  "lits 2024": 100.0,
+  "medecins 2024": 100.0,
+  "salaries 2024": 100.0,
+  "scolarisation 2024": 100.0,
+  "secondaire 2024": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 1350
+}

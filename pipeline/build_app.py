@@ -12,9 +12,10 @@ SITE, APP, OUT = ROOT / "site", ROOT / "app", ROOT / "data" / "processed"
 DATA = json.loads((OUT / "rafah.json").read_text(encoding="utf-8"))
 GEO_TEXT = (OUT / "provinces.geojson").read_text(encoding="utf-8")
 CSS = (SITE / "site.css").read_text(encoding="utf-8")
+API = ROOT / "data" / "api" / "v1"
 FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap">'
 HEAD = '<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="claude:viewport-fit-sides" content="cover">\n'
-NAV = [("index", "Accueil"), ("comprendre", "Comprendre Rafah"), ("explorer", "Explorer"), ("indicateurs", "Indicateurs"), ("analyses", "Analyses"),
+NAV = [("index", "Accueil"), ("comprendre", "Comprendre Rafah"), ("explorer", "Explorer"), ("indicateurs", "Indicateurs"), ("analyses", "Analyses"), ("divisions", "Divisions"),
        ("explorer.html#simulateur", "Simulateur"), ("intelligence", "Intelligence"), ("pro", "Pro"), ("methodologie", "Méthodologie"), ("donnees", "Données"), ("publications", "Publications"), ("apropos", "À propos")]
 DIM_TEXT = ["Médecins, centres de soins primaires et lits d'hôpital.", "Analphabétisme, scolarisation et niveau d'études.", "Chômage, emploi salarié et établissements économiques.",
             "Assainissement, électricité et logements sommaires.", "Eau courante, combustible de cuisson et collecte des déchets.", "Égalité femmes-hommes, activité des femmes et enclavement."]
@@ -166,6 +167,9 @@ def fill(text):
         values["geo_json"] = GEO_TEXT.replace("</", "<\\/")
     if "{{data_json}}" in text:
         values["data_json"] = json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")
+    for key, path in [("divisions_json", API / "divisions.json"), ("division_sante_json", API / "divisions" / "sante.json")]:
+        if "{{" + key + "}}" in text:
+            values[key] = path.read_text(encoding="utf-8").replace("</", "<\\/")
     text = re.sub(r"\{\{(\w+)\}\}", lambda m: str(values[m[1]]), text)
     return text
 
@@ -176,7 +180,9 @@ def main():
         title = re.match(r"<!-- title: (.*?) -->", src)[1]
         body = fill(src.split("-->", 1)[1])
         extra = '<link rel="stylesheet" href="vendor/maplibre-gl.css">' if page.stem == "carte-maplibre" else ""
-        (APP / page.name).write_text(f'{HEAD}<title>{title}</title>{FONTS}{extra}<style>{CSS}</style></head><body>{nav(page.stem)}<main class="page">{body}</main>{FOOT}</body></html>\n', encoding="utf-8")
+        active = "divisions" if page.stem == "sante" else page.stem
+        (APP / page.name).write_text(f'{HEAD}<title>{title}</title>{FONTS}{extra}<style>{CSS}</style></head><body>{nav(active)}<main class="page">{body}</main>{FOOT}</body></html>\n', encoding="utf-8")
+    shutil.copy(SITE / "division.js", APP / "division.js")
     ex = (SITE / "explorer.template.html").read_text(encoding="utf-8")
     for mark, value in [("__NAV__", nav("explorer")), ("__FOOT__", FOOT), ("__SITECSS__", CSS), ("__FONTS__", FONTS),
                         ("__DATA__", json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/")), ("__GEO__", GEO_TEXT.replace("</", "<\\/"))]:
@@ -187,6 +193,9 @@ def main():
     dl.mkdir(exist_ok=True)
     for f in ["rafah_provinces", "rafah_scores_indicateurs", "rafah_metadonnees", "rafah_contexte", "rafah_fiabilite", "audit_territoires", "sources_empreintes", "provenance_sources", "provenance_indicateurs", "data_sources_registry"]:
         shutil.copy(OUT / f"{f}.csv", dl / f"{f}.csv")
+    obs = (ROOT / "data" / "observations" / "observations.csv").read_text(encoding="utf-8").splitlines()
+    sante = [obs[0]] + [l for l in obs[1:] if l.split(",")[0].startswith("H")]
+    (dl / "observations_sante.csv").write_text("\n".join(sante) + "\n", encoding="utf-8")
     sizes = {p.name: p.stat().st_size // 1024 for p in sorted(APP.glob("*.html"))}
     print("Pages (Ko) :", sizes)
 

@@ -1,0 +1,23 @@
+{
+ "dataset_id": "S04_CARTE_SANITAIRE_2024",
+ "source_id": "S04",
+ "nature": "brut",
+ "fichiers": {
+  "raw/cartesanitaire_2024.csv": "8b9898cd9a024f07c225eca58c5dcf631b63ff07d6624dfa62c7f297590b9a81"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 150,
+ "statuts": {
+  "calcule": 146,
+  "zero_reel": 3,
+  "estime": 1
+ },
+ "couverture_pct": {
+  "H02 2024": 100.0,
+  "H03 2024": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 150
+}

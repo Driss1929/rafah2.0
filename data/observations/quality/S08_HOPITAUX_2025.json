@@ -1,0 +1,22 @@
+{
+ "dataset_id": "S08_HOPITAUX_2025",
+ "source_id": "S08",
+ "nature": "brut",
+ "fichiers": {
+  "raw/datagov/hopitaux-2025.xlsx": "4f1f5645b2f89165b5973e74094b6c3a25c63a51604d4a38a502875a996ef1d3"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 150,
+ "statuts": {
+  "calcule": 144,
+  "zero_reel": 6
+ },
+ "couverture_pct": {
+  "H01 2025": 100.0,
+  "H01N 2025": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 150
+}

@@ -1,0 +1,13 @@
+division_id,numero,nom,objectif,etape,statut,indicateurs_rafah_existants,sources_candidates
+sante,1,Rafah Santé,"Disponibilité, répartition et accessibilité des soins",2,pilote,medecins;essp;lits,S01;S04;S06;S07;S08
+education,2,Rafah Éducation,Accès à l'école et inégalités éducatives,2,prévu,analphabetisme;scolarisation;secondaire;ecart_alpha,S01;S14;S15;S16
+economie,3,Rafah Économie,"Emploi, tissu d'entreprises et pauvreté",2,prévu,chomage;salaries;etablissements;activite_f,S01;S02;S03;S09;S10;S11;S12;S13
+eau,4,Rafah Eau,"Ressources en eau, accès et sécheresse",2,prévu,eau,S01
+infrastructures,5,Rafah Infrastructures,Routes et connectivité,3,prévu,enclavement,S01;S05
+habitat,6,Rafah Habitat,Logement et services de base des ménages,3,prévu,assainissement;electricite;bidonville,S01
+environnement,7,Rafah Environnement,"Déchets, énergie domestique et pressions environnementales",4,prévu,bois;dechets,S01
+agriculture,8,Rafah Agriculture,"Production, irrigation et vulnérabilité agricole",4,prévu,,
+numerique,9,Rafah Numérique,Connectivité et inclusion numérique,5,prévu,,
+gouvernance,10,Rafah Gouvernance,Finances et investissement des collectivités,5,prévu,,
+tourisme,11,Rafah Tourisme,Activité et capacité touristiques,5,prévu,,
+resilience,12,Rafah Résilience,Exposition aux risques et vulnérabilité,6,prévu,,

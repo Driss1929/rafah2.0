@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Les 12 divisions</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Reem+Kufi:wght@500&display=swap"><style>/* Portail éditorial : bandeau bleu profond, or réservé aux accents, grands titres sobres. */
+:root {
+  --bg: #f4f6f9; --panel: #ffffff; --fg: #14213a; --muted: #566175; --line: #d7deE8;
+  --accent: #123a6b; --accent-soft: #e2e9f3; --gold: #a97c1f; --warn: #a33b12; --band: #0f2d55; --band-fg: #f4f6f9; --land-line: #ffffff;
+  --c1: #b5431d; --c2: #e59a58; --c3: #e6d79c; --c4: #68b3a4; --c5: #0f6b76;
+  --display: "IBM Plex Sans", "Segoe UI", sans-serif; --body: "IBM Plex Sans", "Segoe UI", sans-serif; --arabic: "Reem Kufi", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1626; --panel: #15213a; --fg: #e8edf5; --muted: #a2aec2; --line: #2c3a55;
+  --accent: #8db4e8; --accent-soft: #1f3050; --gold: #d9b45f; --warn: #f0a07a; --band: #0a1a33; --land-line: #0d1626; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d1626; --panel: #15213a; --fg: #e8edf5; --muted: #a2aec2; --line: #2c3a55;
+  --accent: #8db4e8; --accent-soft: #1f3050; --gold: #d9b45f; --warn: #f0a07a; --band: #0a1a33; --land-line: #0d1626; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); font-variant-numeric: tabular-nums }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+a { color: var(--accent) }
+.site-head { background: var(--band); color: var(--band-fg); padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)) }
+.site-head .in { max-width: 1480px; margin: 0 auto; padding-block: 10px; display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center }
+.brand { color: inherit; text-decoration: none; display: flex; flex-direction: column; line-height: 1.2 }
+.brand b { font-size: 1.15rem } .brand b span { font: 500 1.05rem var(--arabic); color: #e2c37a; margin-left: 6px }
+.brand small { font-size: .72rem; letter-spacing: .03em; opacity: .85 }
+.site-nav { display: flex; flex-wrap: wrap; gap: 2px 4px; flex: 1 1 320px; justify-content: flex-end; min-width: 0 }
+.site-nav a { color: inherit; text-decoration: none; font-size: .88rem; padding: 4px 8px; border-bottom: 2px solid transparent }
+.site-nav a:hover { border-color: #e2c37a }
+.site-nav a[aria-current=page] { border-color: #e2c37a; font-weight: 600 }
+.notice { background: var(--accent-soft); color: var(--fg); font-size: .82rem; padding: 5px max(16px, env(safe-area-inset-right, 0px)) 5px max(16px, env(safe-area-inset-left, 0px)); text-align: center }
+main.page { max-width: 1120px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 34px }
+main.page > * { min-width: 0 }
+main.page h1 { font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1.12; margin: 0 0 12px; text-wrap: balance; font-weight: 700 }
+main.page h2 { font-size: 1.45rem; margin: 0 0 10px; text-wrap: balance }
+main.page h3 { font-size: 1.05rem; margin: 14px 0 5px }
+main.page p, main.page li { max-width: 72ch }
+.lead { font-size: 1.12rem; color: var(--muted) }
+.eyebrow { color: var(--gold); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px }
+.hero { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 4fr); gap: 28px; align-items: center }
+.hero svg { width: 100%; height: auto; max-height: 460px }
+.hero path { stroke: var(--land-line); stroke-width: .35 }
+.btn { display: inline-block; background: var(--accent); color: var(--panel); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 4px 8px 4px 0 }
+.btn.alt { background: none; color: var(--accent); border: 1px solid var(--accent) }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; border-block: 1px solid var(--line); padding-block: 14px }
+.figs b { display: block; font-size: 2.2rem; line-height: 1.1; color: var(--accent) }
+.figs span { color: var(--muted); font-size: .9rem }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px 24px }
+.cols > div { min-width: 0 }
+.cols h3 { margin-top: 0 }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 14px 16px }
+.scroll { overflow-x: auto }
+.page table { border-collapse: collapse; width: 100%; font-size: .88rem; background: var(--panel) }
+.page th, .page td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top }
+.page th { font-size: .8rem; color: var(--muted) }
+td.n, th.n { text-align: right; white-space: nowrap }
+.ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px }
+.ctl label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block }
+.page select, .page input[type=search] { width: 100%; padding: 7px 9px; font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 4px }
+.page button.chip { font: inherit; font-size: .88rem; padding: 7px 12px; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 4px; cursor: pointer }
+th button { all: unset; cursor: pointer; font-weight: 600 } th button:hover { color: var(--accent) }
+.formula { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; font-size: .95rem; overflow-x: auto }
+.site-foot { background: var(--band); color: var(--band-fg); font-size: .86rem; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 22px max(16px, env(safe-area-inset-left, 0px)) }
+.site-foot .in { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 26px; justify-content: space-between }
+.site-foot a { color: inherit } .site-foot p { margin: 0; max-width: 62ch }
+.why-item { display: flex; gap: 14px; align-items: flex-start }
+.why-item img { flex: none; border-radius: 14px; width: 104px; height: 104px }
+.why-item > div { min-width: 0 } .why-item h3 { margin-top: 0 }
+.dim-card { padding: 0; overflow: hidden } .dim-card img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10 }
+.dim-card h3, .dim-card p { margin-inline: 16px } .dim-card h3 { margin-top: 12px } .dim-card p { margin-top: 0 }
+.hm-wrap { max-height: 620px; overflow: auto } #hm th { position: sticky; top: 0; background: var(--panel); z-index: 1 }
+.page td.hc { text-align: center; border: 1px solid var(--panel); color: #14213a }
+.h0 { background: var(--c1) } .page td.h0, .page td.h4 { color: #fff } .h1 { background: var(--c2) } .h2 { background: var(--c3) } .h3 { background: var(--c4) } .h4 { background: var(--c5) }
+.legend-h { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .84rem; color: var(--muted) } .legend-h span { display: inline-flex; gap: 5px; align-items: center } .legend-h b { width: 14px; height: 14px; border-radius: 2px; display: inline-block }
+.eco h3 { margin: 8px 0 4px } .eco ul { padding-left: 18px; font-size: .92rem }
+.stat { display: inline-block; font-size: .76rem; font-weight: 700; padding: 1px 8px; border-radius: 10px; border: 1px solid currentColor }
+.stat.ok { color: var(--accent) } .stat.dev { color: var(--gold) } .stat.vis { color: var(--muted) }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px }
+.flow li { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--gold); padding: 10px 12px; max-width: none }
+.flow b, .flow span { display: block } .flow span { font-size: .85rem; color: var(--muted) }
+.report { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 22px clamp(14px, 3vw, 30px) }
+.report .rtitle { font-size: 1.6rem } .report table { background: none }
+.fine { font-size: .84rem; color: var(--muted) } .demo { border-left: 3px solid var(--gold); padding-left: 10px }
+.mock { border: 2px dashed var(--muted); border-radius: 6px; padding: 16px; background: var(--panel) }
+.mock-tag { display: inline-block; font-size: .8rem; font-weight: 700; color: var(--warn); margin-bottom: 8px }
+.mock-note { font-size: .84rem; color: var(--muted) }
+@media print { .site-head, .notice, .site-foot, .no-print { display: none !important } body { background: #fff; color: #000 } main.page { padding: 0; display: block } .report { border: 0; padding: 0 } }
+@media (max-width: 800px) { .hero { grid-template-columns: minmax(0, 1fr) } .site-nav { justify-content: flex-start } }
+</style></head><body><header class="site-head"><div class="in"><a class="brand" href="index.html"><b>Rafah 2.0<span lang="ar" dir="rtl">رفاه</span></b><small>Observatoire indépendant du bien-être territorial</small></a><nav class="site-nav" aria-label="Menu principal"><a href="index.html">Accueil</a><a href="comprendre.html">Comprendre Rafah</a><a href="explorer.html">Explorer</a><a href="indicateurs.html">Indicateurs</a><a href="analyses.html">Analyses</a><a href="divisions.html" aria-current="page">Divisions</a><a href="explorer.html#simulateur">Simulateur</a><a href="intelligence.html">Intelligence</a><a href="pro.html">Pro</a><a href="methodologie.html">Méthodologie</a><a href="donnees.html">Données</a><a href="publications.html">Publications</a><a href="apropos.html">À propos</a></nav></div></header><div class="notice">Projet de recherche indépendant, sans lien avec une administration. Les résultats ne sont pas des statistiques officielles.</div><main class="page">
+<section>
+  <div class="eyebrow">Observatoire territorial</div>
+  <h1>Les 12 divisions de Rafah</h1>
+  <p class="lead">Douze observatoires thématiques partagent le même référentiel des 75 territoires, le même dictionnaire d'indicateurs, le même registre des sources et le même moteur d'ingestion.</p>
+  <p>Les divisions ne modifient pas l'indice Rafah : ses 18 indicateurs et ses 6 dimensions restent inchangés. Chacun de ces 18 indicateurs est simplement rattaché à la division qui le suit. Une division ouvre seulement quand ses indicateurs ont des sources traçables pour les 75 territoires.</p>
+</section>
+<section>
+  <h2>État d'avancement</h2>
+  <div class="cols" id="div-cards"></div>
+</section>
+<section>
+  <h2>Socle commun</h2>
+  <ol class="flow">
+    <li><b>Référentiel</b><span>75 territoires identifiés par leur code géographique HCP, avec contours.</span></li>
+    <li><b>Dictionnaire</b><span>Définition, formule, unité, niveau et sources de chaque indicateur.</span></li>
+    <li><b>Ingestion</b><span>Empreinte du fichier brut, rapprochement des territoires, contrôles.</span></li>
+    <li><b>Observations</b><span>Valeurs versionnées, avec un statut : publiée, calculée, zéro réel, estimée, manquante…</span></li>
+    <li><b>Publication</b><span>Pages de division, API interne et base PostGIS, depuis les mêmes fichiers.</span></li>
+  </ol>
+  <p class="fine">Fichiers : <code>data/metadata/</code> (divisions, dictionnaire, statuts), <code>pipeline/ingest.py</code> et <code>pipeline/datasets.py</code> (moteur et jeux), <code>data/observations/</code> (observations et rapports qualité), <code>infra/observatoire.sql</code> (schéma PostGIS).</p>
+</section>
+<script>
+const DIVS = [{"id":"sante","numero":1,"nom":"Rafah Santé","objectif":"Disponibilité, répartition et accessibilité des soins","etape":2,"statut":"pilote","indicateurs_rafah":["medecins","essp","lits"],"catalogue":21,"disponibles":9},{"id":"education","numero":2,"nom":"Rafah Éducation","objectif":"Accès à l'école et inégalités éducatives","etape":2,"statut":"prévu","indicateurs_rafah":["analphabetisme","scolarisation","secondaire","ecart_alpha"],"catalogue":0,"disponibles":0},{"id":"economie","numero":3,"nom":"Rafah Économie","objectif":"Emploi, tissu d'entreprises et pauvreté","etape":2,"statut":"prévu","indicateurs_rafah":["chomage","salaries","etablissements","activite_f"],"catalogue":0,"disponibles":0},{"id":"eau","numero":4,"nom":"Rafah Eau","objectif":"Ressources en eau, accès et sécheresse","etape":2,"statut":"prévu","indicateurs_rafah":["eau"],"catalogue":0,"disponibles":0},{"id":"infrastructures","numero":5,"nom":"Rafah Infrastructures","objectif":"Routes et connectivité","etape":3,"statut":"prévu","indicateurs_rafah":["enclavement"],"catalogue":0,"disponibles":0},{"id":"habitat","numero":6,"nom":"Rafah Habitat","objectif":"Logement et services de base des ménages","etape":3,"statut":"prévu","indicateurs_rafah":["assainissement","electricite","bidonville"],"catalogue":0,"disponibles":0},{"id":"environnement","numero":7,"nom":"Rafah Environnement","objectif":"Déchets, énergie domestique et pressions environnementales","etape":4,"statut":"prévu","indicateurs_rafah":["bois","dechets"],"catalogue":0,"disponibles":0},{"id":"agriculture","numero":8,"nom":"Rafah Agriculture","objectif":"Production, irrigation et vulnérabilité agricole","etape":4,"statut":"prévu","indicateurs_rafah":[],"catalogue":0,"disponibles":0},{"id":"numerique","numero":9,"nom":"Rafah Numérique","objectif":"Connectivité et inclusion numérique","etape":5,"statut":"prévu","indicateurs_rafah":[],"catalogue":0,"disponibles":0},{"id":"gouvernance","numero":10,"nom":"Rafah Gouvernance","objectif":"Finances et investissement des collectivités","etape":5,"statut":"prévu","indicateurs_rafah":[],"catalogue":0,"disponibles":0},{"id":"tourisme","numero":11,"nom":"Rafah Tourisme","objectif":"Activité et capacité touristiques","etape":5,"statut":"prévu","indicateurs_rafah":[],"catalogue":0,"disponibles":0},{"id":"resilience","numero":12,"nom":"Rafah Résilience","objectif":"Exposition aux risques et vulnérabilité","etape":6,"statut":"prévu","indicateurs_rafah":[],"catalogue":0,"disponibles":0}];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+document.getElementById("div-cards").innerHTML = DIVS.map(d => `<div class="card"><div class="eyebrow">Division ${String(d.numero).padStart(2, "0")} · étape ${d.etape}</div>
+<h3 style="margin-top:0">${d.statut === "pilote" ? `<a href="${d.id}.html">${esc(d.nom)}</a>` : esc(d.nom)}</h3><p>${esc(d.objectif)}.</p>
+<p><span class="stat ${d.statut === "pilote" ? "ok" : "vis"}">${d.statut === "pilote" ? "pilote en ligne" : "prévue"}</span></p>
+<p class="fine">${d.catalogue ? `Catalogue : ${d.disponibles} indicateurs disponibles sur ${d.catalogue}. ` : "Catalogue à construire. "}${d.indicateurs_rafah.length ? `Indicateurs de l'indice déjà suivis : ${d.indicateurs_rafah.join(", ")}.` : "Aucun indicateur de l'indice pour l'instant."}</p></div>`).join("");
+</script>
+</main><footer class="site-foot"><div class="in"><p>Rafah 2.0. Mesurer, comprendre, agir. Prototype indépendant construit à partir de données publiques du HCP, du ministère de la Santé et de data.gov.ma. Données extraites le 2 novembre 2026.</p><p><a href="apropos.html">À propos</a> · <a href="methodologie.html">Méthodologie</a> · <a href="donnees.html">Sources</a> · <a href="https://github.com/Driss1929/rafah2.0">GitHub</a></p></div></footer></body></html>

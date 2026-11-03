@@ -88,3 +88,31 @@ def indicators():
 @app.get("/v1/geojson/morocco")
 def morocco():
     return load("geojson/morocco.json")
+
+
+@app.get("/v1/dictionary")
+def dictionary(division: str | None = None):
+    data = load("dictionary.json")
+    return [i for i in data if i.get("division") == division] if division else data
+
+
+@app.get("/v1/divisions")
+def divisions():
+    return load("divisions.json")
+
+
+@app.get("/v1/divisions/{did}")
+def division(did: str):
+    # Seules les divisions publiées ont un fichier ; le nom est vérifié pour écarter tout chemin.
+    if not did.isalpha():
+        raise HTTPException(404, "Division inconnue")
+    return load(f"divisions/{did}.json")
+
+
+@app.get("/v1/observations/{indicator}")
+def observations(indicator: str, territory: str | None = None, period: str | None = None):
+    if not indicator.replace("_", "").isalnum():
+        raise HTTPException(404, "Indicateur inconnu")
+    data = load(f"observations/{indicator}.json")
+    data["observations"] = [o for o in data["observations"] if (not territory or o["territory_id"] == territory) and (not period or o["period"] == period)]
+    return data

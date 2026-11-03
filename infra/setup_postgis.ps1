@@ -16,13 +16,17 @@ if (-not (Test-Path "$data\PG_VERSION")) {
 }
 & "$pg\bin\pg_ctl.exe" -D $data status *> $null
 # Lancé à part : postgres hérite sinon de la sortie du script, qui ne se terminerait jamais.
-if ($LASTEXITCODE -ne 0) { Start-Process -FilePath "$pg\bin\pg_ctl.exe" -ArgumentList "-D", "`"$data`"", "-l", "`"$Tools\pg.log`"", "-w", "start" -WindowStyle Hidden -Wait }
+if ($LASTEXITCODE -ne 0) { Start-Process -FilePath "$pg\bin\pg_ctl.exe" -ArgumentList "-D", "`"$data`"", "-l", "`"$Tools\pg.log`"", "-W", "start" -WindowStyle Hidden
+    foreach ($i in 1..40) { & "$pg\bin\pg_isready.exe" -h localhost -p 5544 *> $null; if ($LASTEXITCODE -eq 0) { break }; Start-Sleep -Seconds 1 } }
 $psql = "$pg\bin\psql.exe"
 $exists = & $psql -h localhost -p 5544 -U rafah -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='rafah'"
 if ($exists -ne "1") { & $psql -h localhost -p 5544 -U rafah -d postgres -q -c "CREATE DATABASE rafah" }
 # Les avis de psql arrivent sur stderr : ils ne doivent pas interrompre le script, seul son code de sortie compte.
 $ErrorActionPreference = "Continue"
 $env:PGOPTIONS = "-c client_min_messages=warning"
-& $psql -h localhost -p 5544 -U rafah -d rafah -q -v ON_ERROR_STOP=1 -f "$sqlDir\rafah_postgis.sql" *> "$Tools\load.log"
-if ($LASTEXITCODE -ne 0) { Get-Content "$Tools\load.log" -Tail 8; throw "Échec du chargement" }
+# L'observatoire (divisions, observations versionnées) dépend des territoires : il se charge en second.
+foreach ($f in "rafah_postgis.sql", "observatoire.sql") {
+    & $psql -h localhost -p 5544 -U rafah -d rafah -q -v ON_ERROR_STOP=1 -f "$sqlDir\$f" *> "$Tools\load.log"
+    if ($LASTEXITCODE -ne 0) { Get-Content "$Tools\load.log" -Tail 8; throw "Échec du chargement de $f" }
+}
 & $psql -h localhost -p 5544 -U rafah -d rafah -f "$sqlDir\check_postgis.sql"

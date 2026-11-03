@@ -1,0 +1,22 @@
+{
+ "dataset_id": "S08_HOPITAUX_2024",
+ "source_id": "S08",
+ "nature": "brut",
+ "fichiers": {
+  "raw/datagov/hopitaux-2024.xlsx": "b6f964ec53e180d710b84d9867b0222fe04cac2b756089e511022e494560c07c"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 150,
+ "statuts": {
+  "calcule": 142,
+  "zero_reel": 8
+ },
+ "couverture_pct": {
+  "H01 2024": 100.0,
+  "H01N 2024": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 150
+}

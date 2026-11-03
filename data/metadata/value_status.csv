@@ -1,0 +1,9 @@
+status,libelle,valeur_presente,definition
+observe,Publié,oui,Valeur reprise telle quelle de la source.
+calcule,Calculé,oui,"Ratio ou somme de valeurs publiées, selon la formule du dictionnaire."
+zero_reel,Zéro réel,oui,"Zéro établi par la source, par exemple aucun établissement dans la liste officielle."
+estime,Estimé,oui,"Valeur absente de la source, remplacée par une estimation documentée (par exemple la valeur régionale)."
+convention,Convention,oui,"Valeur fixée par une règle documentée, par exemple « sans objet » compté 0."
+manquant,Manquant,non,Valeur attendue mais absente de la source.
+non_publie,Non publié,non,Le producteur ne publie pas cette valeur à ce niveau géographique.
+confidentiel,Confidentiel,non,Valeur masquée par le producteur (secret statistique).

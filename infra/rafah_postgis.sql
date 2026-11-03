@@ -2,7 +2,7 @@
 BEGIN;
 CREATE EXTENSION IF NOT EXISTS postgis;
 DROP VIEW IF EXISTS territoires_scores;
-DROP TABLE IF EXISTS territory_indicators, territory_dimensions, territories, indicators, dimensions, data_versions;
+DROP TABLE IF EXISTS territory_indicators, territory_dimensions, territories, indicators, dimensions, data_versions CASCADE;
 CREATE TABLE data_versions (version text PRIMARY KEY, computed_on date NOT NULL, note text);
 CREATE TABLE dimensions (id text PRIMARY KEY, name text NOT NULL);
 CREATE TABLE indicators (id text PRIMARY KEY, name text NOT NULL, dimension_id text NOT NULL REFERENCES dimensions, direction text NOT NULL CHECK (direction IN ('positive','negative')),

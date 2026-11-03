@@ -1,0 +1,23 @@
+{
+ "dataset_id": "S07_ESSP_2025",
+ "source_id": "S07",
+ "nature": "brut",
+ "fichiers": {
+  "raw/datagov/essp-2025.xlsx": "b8fb8f60e610b218480f332cc348c7b17b058a62abd123eaf2c731a8270dfb82",
+  "processed/referentiel_territoires.geojson": "f78f6f1c4972d83b7ba1eca8ea75af289517ece1f343e8a5a3ac0199da41cefe"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 225,
+ "statuts": {
+  "calcule": 225
+ },
+ "couverture_pct": {
+  "H05 2025": 100.0,
+  "H05N 2025": 100.0,
+  "H06 2025": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 225
+}

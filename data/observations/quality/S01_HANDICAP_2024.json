@@ -1,0 +1,20 @@
+{
+ "dataset_id": "S01_HANDICAP_2024",
+ "source_id": "S01",
+ "nature": "brut",
+ "fichiers": {
+  "raw/hcp_national_242671.xlsx": "f3d96fcae3c10a2c194b2fe97ee8352a242fb3f36b1b63d4d2a7006176dc7c3e"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 75,
+ "statuts": {
+  "observe": 75
+ },
+ "couverture_pct": {
+  "H19 2024": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 75
+}

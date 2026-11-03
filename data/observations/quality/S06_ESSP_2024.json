@@ -1,0 +1,21 @@
+{
+ "dataset_id": "S06_ESSP_2024",
+ "source_id": "S06",
+ "nature": "brut",
+ "fichiers": {
+  "raw/datagov/essp-2024.xlsx": "26ecbe11e6bf6fbcc1d9725db0f596dddf1bd7732bf0d913d8975639d9bbdbd6"
+ },
+ "ingere_le": "2026-11-03",
+ "observations": 150,
+ "statuts": {
+  "calcule": 150
+ },
+ "couverture_pct": {
+  "H05 2024": 100.0,
+  "H05N 2024": 100.0
+ },
+ "avertissements": [],
+ "nouvelles": 0,
+ "corrigees": 0,
+ "inchangees": 150
+}

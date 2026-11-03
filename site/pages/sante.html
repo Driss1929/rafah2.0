@@ -1,0 +1,67 @@
+<!-- title: Rafah Santé -->
+<section>
+  <div class="eyebrow">Division 01 · pilote</div>
+  <h1>Rafah Santé</h1>
+  <p class="lead">Disponibilité, répartition et accessibilité des soins dans les 75 provinces et préfectures, à partir des listes et de la carte sanitaire du ministère de la Santé.</p>
+  <p class="demo">Observatoire descriptif. Les signaux désignent des territoires à examiner : ils ne jugent ni la qualité des soins ni la gestion locale. Un territoire sans hôpital peut être desservi par un territoire voisin. Ces valeurs n'entrent pas dans le calcul de l'indice Rafah, sauf les trois indicateurs déjà présents dans sa dimension Santé.</p>
+  <div class="figs" id="d-figs"></div>
+  <p class="fine">Aller à : <a href="#catalogue">Indicateurs</a> · <a href="#carte">Carte</a> · <a href="#profil">Profil</a> · <a href="#comparer">Comparer</a> · <a href="#evolution">Évolution</a> · <a href="#inegalites">Inégalités</a> · <a href="#signaux">Signaux</a> · <a href="#sources">Sources</a> · <a href="divisions.html">Les 12 divisions</a></p>
+</section>
+<section id="catalogue">
+  <h2>Catalogue des indicateurs</h2>
+  <p>Le catalogue reprend les indicateurs prévus pour la santé. Ceux qui ne sont pas publiés par province, ou qui demandent un calcul d'itinéraires, restent affichés comme manquants : aucune valeur n'est inventée pour les combler.</p>
+  <div class="scroll"><table id="d-cat"></table></div>
+</section>
+<section id="carte">
+  <h2>Carte</h2>
+  <div class="ctl"><div><label for="d-ind">Indicateur</label><select id="d-ind"></select></div></div>
+  <div class="cols" style="align-items:start">
+    <div id="d-map" style="max-width:520px"></div>
+    <div><div class="legend-h" id="d-legend" style="flex-direction:column"></div><p class="fine">Cliquez sur un territoire pour ouvrir son profil. Les teintes séparent les 75 territoires en cinq groupes de taille égale ; elles ne disent pas si une valeur est suffisante.</p></div>
+  </div>
+</section>
+<section id="profil">
+  <h2>Profil territorial</h2>
+  <div class="ctl"><div><label for="d-terr">Province ou préfecture</label><select id="d-terr"></select></div></div>
+  <div class="card" id="d-profile"></div>
+</section>
+<section id="comparer">
+  <h2>Comparer les territoires</h2>
+  <div class="ctl">
+    <div><label for="d-region">Région</label><select id="d-region"></select></div>
+    <div><label for="d-q">Province ou préfecture</label><input id="d-q" type="search" placeholder="Azilal, Rabat…"></div>
+    <div><label>&nbsp;</label><button class="chip" id="d-export" type="button">Exporter ce tableau (CSV)</button></div>
+  </div>
+  <p id="d-count" class="fine" style="margin:0 0 6px"></p>
+  <div class="scroll"><table id="d-table"></table></div>
+  <p class="fine">* Valeur à statut particulier (zéro réel, estimée) : voir le profil du territoire.</p>
+</section>
+<section id="evolution">
+  <h2>Évolution 2024-2025</h2>
+  <p>Nombre d'établissements dans les listes publiées par le ministère sur data.gov.ma. Une variation peut venir d'une ouverture, d'une fermeture ou d'un changement de la liste elle-même.</p>
+  <div class="cols" id="d-evo"></div>
+</section>
+<section id="inegalites">
+  <h2>Inégalités de répartition</h2>
+  <p>Le coefficient de Gini pondéré par la population vaut 0 si chaque habitant dispose de la même dotation, et se rapproche de 1 quand l'offre se concentre dans quelques territoires. Il est calculé sur les ratios provinciaux, sans tenir compte des déplacements entre territoires.</p>
+  <div class="scroll"><table id="d-ineq"></table></div>
+</section>
+<section id="signaux">
+  <h2>Territoires à examiner (<span id="d-flags-n"></span>)</h2>
+  <p>Un territoire apparaît ici s'il est dans le cinquième le plus bas pour les médecins ou pour les lits, ou s'il n'a aucun établissement dans la liste des hôpitaux 2025. C'est un point de départ pour une étude, pas un classement.</p>
+  <div class="scroll"><table id="d-flags"></table></div>
+</section>
+<section id="sources">
+  <h2>Sources, jeux ingérés et statuts</h2>
+  <div class="scroll"><table id="d-src"></table></div>
+  <h3>Jeux de données ingérés</h3>
+  <p>Chaque fichier brut est conservé tel quel et identifié par son empreinte. Une valeur corrigée ajoute une version sans effacer la précédente.</p>
+  <div class="scroll"><table id="d-jeux"></table></div>
+  <h3>Statuts des valeurs</h3>
+  <p class="fine">Publié · Calculé (ratio de valeurs publiées) · Zéro réel (aucun établissement dans la liste officielle) · Estimé (valeur de la région, documentée) · Convention · Manquant · Non publié · Confidentiel. Une valeur absente n'est jamais remplacée par zéro.</p>
+  <p><a href="donnees/observations_sante.csv">Télécharger les observations Santé (CSV)</a></p>
+</section>
+<script src="division.js"></script>
+<script>
+RafahDivision.render({{division_sante_json}}, {{geo_json}});
+</script>

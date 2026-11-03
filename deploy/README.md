@@ -48,10 +48,14 @@ L'administration est fermée au public. Pour y accéder, ajoutez temporairement 
 git pull && docker compose up -d --build
 ```
 
-Le fichier `rafah_postgis.sql` n'est chargé qu'à la première création de la base. Après un recalcul :
+Les fichiers `rafah_postgis.sql` puis `observatoire.sql` ne sont chargés qu'à la première création de la base. Après un recalcul, dans cet ordre :
 
 ```bash
 docker compose exec -T db psql -U rafah -d rafah < ../infra/rafah_postgis.sql
+```
+
+```bash
+docker compose exec -T db psql -U rafah -d rafah < ../infra/observatoire.sql
 ```
 
 ## Avant de publier

@@ -11,6 +11,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql
       - ../infra/rafah_postgis.sql:/docker-entrypoint-initdb.d/20_rafah.sql:ro
+      - ../infra/observatoire.sql:/docker-entrypoint-initdb.d/30_observatoire.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U rafah -d rafah"]
       interval: 10s

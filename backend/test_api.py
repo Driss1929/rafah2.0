@@ -53,3 +53,15 @@ def test_catalogues_and_geojson():
 def test_unknown_or_unsafe_ids():
     for tid in ("99999", "abc", "..%2F..%2Fmetadata", "2251x"):
         assert client.get(f"/v1/territories/{tid}").status_code == 404, tid
+    for path in ("/v1/divisions/eau", "/v1/divisions/..%2Fmetadata", "/v1/observations/inconnu", "/v1/observations/..%2Fmetadata"):
+        assert client.get(path).status_code == 404, path
+
+
+def test_divisions_and_observations():
+    divs = client.get("/v1/divisions").json()
+    assert len(divs) == 12 and [d["id"] for d in divs if d["statut"] == "pilote"] == ["sante"]
+    assert len(client.get("/v1/divisions/sante").json()["territoires"]) == 75
+    assert {i["indicator_id"] for i in client.get("/v1/dictionary", params={"division": "sante"}).json()} >= {"H01", "H19", "medecins"}
+    obs = client.get("/v1/observations/H03", params={"territory": "12066"}).json()["observations"]
+    assert len(obs) == 1 and obs[0]["status"] == "estime"
+    assert len(client.get("/v1/observations/H05N", params={"period": "2025"}).json()["observations"]) == 75
