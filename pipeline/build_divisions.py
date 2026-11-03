@@ -104,7 +104,7 @@ def health(obs, dictionary, cov, registry):
                      for r in division_inds],
         colonnes=[dict(indicator_id=i, periode=p, nom=dictionary[i]["nom"], unite=dictionary[i]["unite"]) for i, p in table_ids],
         territoires=rows, inegalites=ineq, evolution=hist, signaux=flags,
-        sources=[{k: s[k] for k in ("source_id", "dataset_name", "producer", "original_url", "reference_year", "licence")} for s in registry if s["source_id"] in used],
+        sources=[{k: s[k] for k in ("source_id", "dataset_name", "producer", "original_url", "reference_year", "licence", "quality_class", "published_on")} for s in registry if s["source_id"] in used],
         jeux=[r for r in read_csv(OBS / "datasets.csv") if r["dataset_id"].startswith(("S04", "S06", "S07", "S08", "S01_HANDICAP"))],
     )
 
@@ -124,7 +124,8 @@ BEGIN;
 DROP VIEW IF EXISTS observations_courantes;
 DROP TABLE IF EXISTS indicator_observations, datasets, indicator_catalogue, divisions, data_sources, value_statuses CASCADE;
 CREATE TABLE divisions (id text PRIMARY KEY, numero integer NOT NULL UNIQUE, name text NOT NULL, objective text NOT NULL, stage integer NOT NULL, status text NOT NULL);
-CREATE TABLE data_sources (id text PRIMARY KEY, dataset_name text NOT NULL, producer text NOT NULL, url text NOT NULL, reference_year text, geographic_level text, licence text, verification_status text);
+CREATE TABLE data_sources (id text PRIMARY KEY, dataset_name text NOT NULL, producer text NOT NULL, url text NOT NULL, reference_year text, geographic_level text, licence text, verification_status text,
+  quality_class char(1) NOT NULL CHECK (quality_class IN ('A','B','C','D','E')), resource_url text, published_on text, file_matches_portal text, personal_data text NOT NULL, usage text);
 CREATE TABLE value_statuses (status text PRIMARY KEY, label text NOT NULL, has_value boolean NOT NULL, definition text NOT NULL);
 CREATE TABLE indicator_catalogue (id text PRIMARY KEY, division_id text REFERENCES divisions, subdomain text, name text NOT NULL, unit text NOT NULL, formula text, formula_version integer,
   geographic_level text, availability text NOT NULL, core_indicator text, sources text, note text);
@@ -137,7 +138,8 @@ CREATE TABLE indicator_observations (indicator_id text NOT NULL REFERENCES indic
 CREATE UNIQUE INDEX observations_une_courante ON indicator_observations (indicator_id, territory_id, period) WHERE is_current;
 """]
     out += [f"INSERT INTO divisions VALUES ({q(d['division_id'])}, {d['numero']}, {q(d['nom'])}, {q(d['objectif'])}, {d['etape']}, {q(d['statut'])});" for d in divisions]
-    out += [f"INSERT INTO data_sources VALUES ({q(s['source_id'])}, {q(s['dataset_name'])}, {q(s['producer'])}, {q(s['original_url'])}, {q(s['reference_year'])}, {q(s['geographic_level'])}, {q(s['licence'])}, {q(s['verification_status'])});" for s in registry]
+    out += [f"INSERT INTO data_sources VALUES ({q(s['source_id'])}, {q(s['dataset_name'])}, {q(s['producer'])}, {q(s['original_url'])}, {q(s['reference_year'])}, {q(s['geographic_level'])}, {q(s['licence'])}, {q(s['verification_status'])}, "
+            f"{q(s['quality_class'])}, {q(s['resource_url'])}, {q(s['published_on'])}, {q(s['file_matches_portal'])}, {q(s['personal_data'])}, {q(s['usage'])});" for s in registry]
     out += [f"INSERT INTO value_statuses VALUES ({q(k)}, {q(s['libelle'])}, {q(s['valeur_presente'] == 'oui')}, {q(s['definition'])});" for k, s in STATUSES.items()]
     for r in dictionary.values():
         ver = r.get("version_formule")

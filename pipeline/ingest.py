@@ -125,7 +125,8 @@ def save_versioned(df, ds, today):
     for r in df.itertuples(index=False):
         k = (r.indicator_id, r.territory_id, str(r.period))
         prev = current.loc[k] if k in current.index else None
-        same = prev is not None and prev.status == r.status and prev.note == r.note and (
+        # Une source corrigée est une correction comme une autre : elle crée une version.
+        same = prev is not None and prev.status == r.status and prev.note == r.note and prev.source_id == r.source_id and (
             (pd.isna(prev.value) and pd.isna(r.value)) or (pd.notna(prev.value) and pd.notna(r.value) and math.isclose(float(prev.value), r.value, rel_tol=1e-8, abs_tol=1e-9)))
         if same:
             unchanged += 1

@@ -5,7 +5,8 @@
 | R01 | Droits de réutilisation des données du HCP et de la carte sanitaire non confirmés | Élevée | Publication à retirer | Demande écrite aux producteurs avant toute diffusion institutionnelle |
 | R02 | Contours geoBoundaries 2017 simplifiés, non officiels | Certaine | Superficies et cartes approximatives (H06) | M02 : source officielle ou mention explicite |
 | R03 | Rapprochement des listes ministérielles par nom | Moyenne | Établissement compté dans la mauvaise province | Contrôles bloquants actuels ; table de correspondance versionnée (T-106) |
-| R04 | 18 fichiers bruts hors registre de provenance | Certaine | Traçabilité incomplète | T-203 |
+| R04 | Fichiers bruts hors registre de provenance | Corrigé | Traçabilité incomplète | 36 sur 36 enregistrés, contrôle automatique |
+| R14 | Listes ministérielles contenant des coordonnées de personnes (S31, S33) | Certaine | Diffusion de données personnelles (loi 09-08) | Jamais versionnées ni publiées ; comptages seulement ; test automatique |
 | R05 | Indicateurs provinciaux de santé indisponibles (infirmiers, mortalité, vaccination, accès) | Certaine | Division Santé limitée à 9 indicateurs sur 21 | Affichage « non collecté » ; demandes aux producteurs |
 | R06 | Un territoire sans hôpital peut être desservi par un voisin | Certaine | Signaux mal interprétés | Avertissement sur la page ; accessibilité par itinéraires (M06) |
 | R07 | Dénominateur 2024 utilisé pour les comptes 2025 | Certaine | Ratios 2025 légèrement surestimés si la population croît | Documenté dans le dictionnaire ; à remplacer par les projections HCP |

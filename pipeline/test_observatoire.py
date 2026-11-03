@@ -94,6 +94,21 @@ def test_versionnement_et_refus():
         shutil.rmtree(tmp)
 
 
+def test_registre_complet():
+    reg = list(csv.DictReader(open(PROCESSED / "data_sources_registry.csv", encoding="utf-8-sig")))
+    files = {r["fichier"] for r in csv.DictReader(open(PROCESSED / "sources_empreintes.csv", encoding="utf-8"))}
+    assert {r["file"] for r in reg} == files, "fichier brut hors registre"
+    assert len({r["source_id"] for r in reg}) == len(reg)
+    for r in reg:
+        assert r["quality_class"] in "ABCDE" and len(r["quality_class"]) == 1, r["source_id"]
+        if r["file"].startswith("datagov/"):
+            assert r["file_matches_portal"].startswith("Oui") and r["resource_url"].startswith("https://data.gov.ma/"), r["file"]
+    assert set(CUR.source_id) | set(ALL.source_id) <= {r["source_id"] for r in reg}
+    # Les fichiers contenant des coordonnées de personnes ne sont jamais republiés.
+    published = {p.name for p in (ROOT / "app" / "donnees").glob("*")}
+    assert not any(Path(r["file"]).name in published for r in reg if r["personal_data"] != "Non")
+
+
 def test_sql():
     s = (ROOT / "infra" / "observatoire.sql").read_text(encoding="utf-8")
     for t in ["divisions", "data_sources", "value_statuses", "indicator_catalogue", "datasets", "indicator_observations"]:

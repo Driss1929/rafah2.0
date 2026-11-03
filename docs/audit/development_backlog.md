@@ -32,7 +32,7 @@ Statuts : Backlog, Prêt, En cours, Bloqué, En revue, Terminé. Une tâche n'es
 |---|---|---|
 | T-201 | Schémas logiques (`geography`, `catalog`, `sources`, `observations`…) et migrations versionnées | Base recréée depuis zéro par les migrations |
 | T-202 | Périodes en dates de début et de fin, version de méthode, date de publication sur chaque observation | Contrainte d'unicité indicateur, territoire, période, version |
-| T-203 | Registre des sources complet : 18 fichiers à ajouter, dates de publication, fréquence | Aucun fichier brut hors registre |
+| T-203 | Registre des sources complet. Fait le 3 novembre 2026 : 36 sources, classes A à E, dates de mise en ligne, empreintes comparées au portail, données personnelles signalées. Reste la fréquence de mise à jour | Aucun fichier brut hors registre (`test_registre_complet`) |
 | T-204 | Noms arabes, sens d'interprétation, règles d'éligibilité dans le dictionnaire | Dictionnaire relu |
 | T-205 | Motif de chaque correction dans l'historique | Test de versionnement étendu |
 | T-206 | Faire lire l'indice depuis l'observatoire au lieu de `rafah.json` | Scores identiques, 0 rang différent |

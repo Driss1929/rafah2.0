@@ -4,5 +4,5 @@ S01_HANDICAP_2024,S01,RGPH 2024 : prévalence du handicap,brut,raw/hcp_national_
 S04_CARTE_SANITAIRE_2024,S04,Carte sanitaire 2024 : médecins et lits,brut,raw/cartesanitaire_2024.csv,8b9898cd9a024f07c225eca58c5dcf631b63ff07d6624dfa62c7f297590b9a81,150,H02;H03,2024,2026-11-03
 S06_ESSP_2024,S06,Établissements de soins primaires 2024,brut,raw/datagov/essp-2024.xlsx,26ecbe11e6bf6fbcc1d9725db0f596dddf1bd7732bf0d913d8975639d9bbdbd6,150,H05;H05N,2024,2026-11-03
 S07_ESSP_2025,S07,Établissements de soins primaires 2025 et densité au km²,brut,raw/datagov/essp-2025.xlsx;processed/referentiel_territoires.geojson,b8fb8f60e610b218480f332cc348c7b17b058a62abd123eaf2c731a8270dfb82;f78f6f1c4972d83b7ba1eca8ea75af289517ece1f343e8a5a3ac0199da41cefe,225,H05;H05N;H06,2025,2026-11-03
-S08_HOPITAUX_2024,S08,Liste des hôpitaux 2024,brut,raw/datagov/hopitaux-2024.xlsx,b6f964ec53e180d710b84d9867b0222fe04cac2b756089e511022e494560c07c,150,H01;H01N,2024,2026-11-03
+S08_HOPITAUX_2024,S19,Liste des hôpitaux 2024,brut,raw/datagov/hopitaux-2024.xlsx,b6f964ec53e180d710b84d9867b0222fe04cac2b756089e511022e494560c07c,150,H01;H01N,2024,2026-11-03
 S08_HOPITAUX_2025,S08,Liste des hôpitaux 2025,brut,raw/datagov/hopitaux-2025.xlsx,4f1f5645b2f89165b5973e74094b6c3a25c63a51604d4a38a502875a996ef1d3,150,H01;H01N,2025,2026-11-03

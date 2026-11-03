@@ -99,7 +99,7 @@ def areas():
 CATALOG = [
     Dataset("RAFAH_INDICE_2024", "S01", "18 indicateurs de l'indice Rafah, sortie contrôlée de build_index.py", ["processed/rafah.json"], core_index, kind="dérivé"),
     Dataset("S04_CARTE_SANITAIRE_2024", "S04", "Carte sanitaire 2024 : médecins et lits", ["raw/cartesanitaire_2024.csv"], health_map),
-    Dataset("S08_HOPITAUX_2024", "S08", "Liste des hôpitaux 2024", ["raw/datagov/hopitaux-2024.xlsx"], hospitals(2024)),
+    Dataset("S08_HOPITAUX_2024", "S19", "Liste des hôpitaux 2024", ["raw/datagov/hopitaux-2024.xlsx"], hospitals(2024)),
     Dataset("S08_HOPITAUX_2025", "S08", "Liste des hôpitaux 2025", ["raw/datagov/hopitaux-2025.xlsx"], hospitals(2025)),
     Dataset("S06_ESSP_2024", "S06", "Établissements de soins primaires 2024", ["raw/datagov/essp-2024.xlsx"], primary_care(2024)),
     Dataset("S07_ESSP_2025", "S07", "Établissements de soins primaires 2025 et densité au km²", ["raw/datagov/essp-2025.xlsx", "processed/referentiel_territoires.geojson"], primary_care(2025)),

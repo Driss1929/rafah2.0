@@ -1,0 +1,76 @@
+{
+ "page_locale_vs_postgis": {
+  "valeurs": 600,
+  "ecarts": 0,
+  "exemples": []
+ },
+ "observations_sans_source": 0,
+ "territoires_par_indicateur_et_periode": [
+  75
+ ],
+ "statuts": {
+  "calcule": 1478,
+  "convention": 2,
+  "estime": 2,
+  "observe": 748,
+  "zero_reel": 20
+ },
+ "zeros_sans_statut_zero": [
+  [
+   "bois",
+   "Oued Ed-Dahab",
+   "calcule"
+  ],
+  [
+   "bois",
+   "Laâyoune",
+   "calcule"
+  ],
+  [
+   "bois",
+   "Mohammadia",
+   "calcule"
+  ],
+  [
+   "bois",
+   "Médiouna",
+   "calcule"
+  ],
+  [
+   "bois",
+   "Casablanca",
+   "calcule"
+  ],
+  [
+   "bois",
+   "Rabat",
+   "calcule"
+  ],
+  [
+   "bois",
+   "Fès",
+   "calcule"
+  ],
+  [
+   "enclavement",
+   "Casablanca",
+   "convention"
+  ],
+  [
+   "enclavement",
+   "Rabat",
+   "convention"
+  ]
+ ],
+ "valeurs_nulles_avec_statut_a_valeur": 0,
+ "indicateurs_par_division": {
+  "eau": 1,
+  "economie": 4,
+  "education": 4,
+  "environnement": 2,
+  "habitat": 3,
+  "infrastructures": 1,
+  "sante": 11
+ },
+ "geometries_invalides": 0
+}
